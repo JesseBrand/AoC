@@ -13,7 +13,7 @@ public class D01 {
 	private static final Map<String, Integer> DIGIT_MAPPING = buildMap();
 
 	public static void main(String[] args) throws IOException {
-		final List<String> lines = readFile("2023/d1");
+		final List<String> lines = readFile("2023/d01");
 //		System.out.println(lines);
 		int total = 0;
 		for (String line : lines) {

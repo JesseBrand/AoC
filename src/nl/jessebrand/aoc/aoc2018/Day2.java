@@ -1,16 +1,14 @@
-import java.io.BufferedReader;
+package nl.jessebrand.aoc.aoc2018;
+
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import nl.jessebrand.aoc.Utils;
 
 public class Day2 {
 
     public static void main(String[] args) throws IOException {
-        List<String> values = Util.readStringList(2);
+        List<String> values = Utils.readFile("2018/d02");
 
         int total2s = 0;
         int total3s = 0;

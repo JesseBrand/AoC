@@ -260,4 +260,26 @@ public class Utils {
 		}
 		return result;
 	}
+
+	public static String substring(final List<String> lines, final int y, final int startX, final int endX) {
+		if (y < 0 || y > lines.size()) {
+			return "";
+		}
+		return lines.get(y).substring(startX, endX);
+	}
+
+	public static char charAtSafe(final List<String> lines, final int x, final int y) {
+		return charAtSafe(lines, x, y, '.');
+	}
+
+	public static char charAtSafe(final List<String> lines, final int x, final int y, final char def) {
+		if (y < 0 || y >= lines.size()) {
+			return def;
+		}
+		if (x < 0 || x >= lines.get(y).length()) {
+			return def;
+		}
+		return lines.get(y).charAt(x);
+	}
+
 }

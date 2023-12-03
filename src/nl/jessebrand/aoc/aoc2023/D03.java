@@ -1,6 +1,8 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.charAtSafe;
 import static nl.jessebrand.aoc.Utils.readFile;
+import static nl.jessebrand.aoc.Utils.substring;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,25 +11,24 @@ public class D03 {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d03");
-		System.out.println(lines);
 		int total = 0;
 		for (int y = 0; y < lines.size(); y++) {
-			String line = lines.get(y);
+			final String line = lines.get(y);
 			for (int x = 0; x < line.length(); x++) {
-				char c = charAt(lines, x, y);
-				int startX = -1;
+				char c = charAtSafe(lines, x, y);
 				if (c >= '0' && c <= '9') {
-					startX = x;
+					final int startX = x;
 					while (c >= '0' && c <= '9') {
 						x++;
-						c = charAt(lines, x, y);
+						c = charAtSafe(lines, x, y);
 					}
-					int number = Integer.parseInt(substring(lines, y, startX, x));
-					System.out.println(number);
-					char r = findSymbol(lines, startX - 1, x, y - 1, y + 1);
-					if (r != 0) {
-						System.out.println(String.format("Added %d because of %s", number, "" + r));
+					final int number = Integer.parseInt(substring(lines, y, startX, x));
+					final char symbol = findSymbol(lines, startX - 1, x, y - 1, y + 1);
+					if (symbol != 0) {
+						System.out.println(String.format("Added %d [r%d c%d] because of %c", number, y, x, symbol));
 						total += number;
+					} else {
+						System.out.println(String.format("Skipped %d [r%d c%d]", number, y, x));
 					}
 				}
 			}
@@ -36,10 +37,10 @@ public class D03 {
 		System.out.println(total);
 	}
 
-	private static char findSymbol(List<String> lines, int startX, int endX, int startY, int endY) {
+	private static char findSymbol(final List<String> lines, final int startX, final int endX, final int startY, final int endY) {
 		for (int y = startY; y <= endY; y++) {
 			for (int x = startX; x <= endX; x++) {
-				char c = charAt(lines, x, y);
+				char c = charAtSafe(lines, x, y);
 				if (c != '.' && !(c >= '0' && c <= '9')) {
 					return c;
 				}
@@ -47,24 +48,4 @@ public class D03 {
 		}
 		return 0;
 	}
-
-	private static String substring(List<String> lines, int y, int startX, int endX) {
-		if (y < 0 || y > lines.size()) {
-			return "";
-		}
-		return lines.get(y).substring(startX, endX);
-	}
-
-	private static char charAt(List<String> lines, int x, int y) {
-		if (y < 0 || y >= lines.size()) {
-			return '.';
-		}
-		if (x < 0 || x >= lines.get(y).length()) {
-			return '.';
-		}
-		return lines.get(y).charAt(x);
-	}
-
 }
-
-// 546817

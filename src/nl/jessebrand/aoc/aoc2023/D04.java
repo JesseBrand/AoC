@@ -18,16 +18,13 @@ public class D04 {
 			int score = 0;
 			int matches = 0;
 			for (int yours : card.yourNumbers()) {
-				for (int winning : card.winningNumbers()) {
-					if (yours == winning) {
-						if (score == 0) {
-							score = 1;
-						} else {
-							score *= 2;
-						}
-						matches++;
-						break;
+				if (card.winningNumbers().contains(yours)) {
+					if (score == 0) {
+						score = 1;
+					} else {
+						score *= 2;
 					}
+					matches++;
 				}
 			}
 			total += score;
@@ -38,8 +35,8 @@ public class D04 {
 
 	static record Card(int id, List<Integer> yourNumbers, List<Integer> winningNumbers) {}
 
-	static List<Card> parseCards(List<String> lines) {
-		List<Card> result = new ArrayList<>();
+	static List<Card> parseCards(final List<String> lines) {
+		final List<Card> result = new ArrayList<>();
 		for (final String line : lines) {
 			result.add(parseCard(line));
 		}
@@ -48,10 +45,10 @@ public class D04 {
 
 	private static Card parseCard(String line) {
 		String tmp = line.substring("Card ".length());
-		int i = tmp.indexOf(":");
-		int id = Integer.parseInt(tmp.substring(0, i).trim());
+		final int i = tmp.indexOf(":");
+		final int id = Integer.parseInt(tmp.substring(0, i).trim());
 		tmp = tmp.substring(i + 1);
-		String[] split = tmp.split("\\|");
+		final String[] split = tmp.split("\\|");
 		final List<Integer> yours = parseIntsFromString(split[0]);
 		final List<Integer> winning = parseIntsFromString(split[1]);
 		return new Card(id, yours, winning);

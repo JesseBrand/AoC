@@ -23,11 +23,8 @@ public class D04b {
 		for (Card card : cards) {
 			int matches = 0;
 			for (int yours : card.yourNumbers()) {
-				for (int winning : card.winningNumbers()) {
-					if (yours == winning) {
-						matches++;
-						break;
-					}
+				if (card.winningNumbers().contains(yours)) {
+					matches++;
 				}
 			}
 			for (int i = card.id() + 1; i < card.id() + 1 + matches; i++) {

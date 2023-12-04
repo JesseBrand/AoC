@@ -14,10 +14,10 @@ public class D04 {
 		final List<Card> cards = parseCards(lines);
 
 		int total = 0;
-		for (Card card : cards) {
+		for (final Card card : cards) {
 			int score = 0;
 			int matches = 0;
-			for (int yours : card.yourNumbers()) {
+			for (final int yours : card.yourNumbers()) {
 				if (card.winningNumbers().contains(yours)) {
 					if (score == 0) {
 						score = 1;
@@ -43,7 +43,7 @@ public class D04 {
 		return result;
 	}
 
-	private static Card parseCard(String line) {
+	private static Card parseCard(final String line) {
 		String tmp = line.substring("Card ".length());
 		final int i = tmp.indexOf(":");
 		final int id = Integer.parseInt(tmp.substring(0, i).trim());

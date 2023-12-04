@@ -232,7 +232,7 @@ public class Utils {
 		}
 	}
 
-	private static void assertTrue(boolean condition) {
+	public static void assertTrue(boolean condition) {
 		if (!condition) {
 			throw new AssertionError();
 		}
@@ -280,6 +280,16 @@ public class Utils {
 			return def;
 		}
 		return lines.get(y).charAt(x);
+	}
+
+	public static List<Integer> parseIntsFromString(final String string) {
+		final List<Integer> result = new ArrayList<>();
+		for (String s : string.split("\\ ")) {
+			if (!s.isBlank()) {
+				result.add(Integer.parseInt(s.trim()));
+			}
+		}
+		return result;
 	}
 
 }

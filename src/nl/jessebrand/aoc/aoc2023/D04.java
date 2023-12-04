@@ -1,5 +1,6 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.parseIntsFromString;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ public class D04 {
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d04");
 		final List<Card> cards = parseCards(lines);
-		System.out.println(cards);
+
 		int total = 0;
 		for (Card card : cards) {
 			int score = 0;
@@ -35,9 +36,9 @@ public class D04 {
 		System.out.println(total);
 	}
 
-	private record Card(int id, List<Integer> yourNumbers, List<Integer> winningNumbers) {}
+	static record Card(int id, List<Integer> yourNumbers, List<Integer> winningNumbers) {}
 
-	private static List<Card> parseCards(List<String> lines) {
+	static List<Card> parseCards(List<String> lines) {
 		List<Card> result = new ArrayList<>();
 		for (final String line : lines) {
 			result.add(parseCard(line));
@@ -51,20 +52,8 @@ public class D04 {
 		int id = Integer.parseInt(tmp.substring(0, i).trim());
 		tmp = tmp.substring(i + 1);
 		String[] split = tmp.split("\\|");
-		String[] splitLeft = split[0].split("\\ ");
-		String[] splitRight = split[1].split("\\ ");
-		final List<Integer> yours = new ArrayList<>();
-		for (String left : splitLeft) {
-			if (!left.isBlank()) {
-				yours.add(Integer.parseInt(left.trim()));
-			}
-		}
-		final List<Integer> winning = new ArrayList<>();
-		for (String right : splitRight) {
-			if (!right.isBlank()) {
-				winning.add(Integer.parseInt(right.trim()));
-			}
-		}
+		final List<Integer> yours = parseIntsFromString(split[0]);
+		final List<Integer> winning = parseIntsFromString(split[1]);
 		return new Card(id, yours, winning);
 	}
 

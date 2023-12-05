@@ -284,20 +284,16 @@ public class Utils {
 
 	public static List<Integer> parseIntsFromString(final String string) {
 		final List<Integer> result = new ArrayList<>();
-		for (String s : string.split("\\ ")) {
-			if (!s.isBlank()) {
-				result.add(Integer.parseInt(s.trim()));
-			}
+		for (String s : string.trim().split("\s+")) {
+			result.add(Integer.parseInt(s.trim()));
 		}
 		return result;
 	}
 
 	public static List<Long> parseLongsFromString(final String string) {
 		final List<Long> result = new ArrayList<>();
-		for (String s : string.split("\\ ")) {
-			if (!s.isBlank()) {
-				result.add(Long.parseLong(s.trim()));
-			}
+		for (String s : string.trim().split("\s+")) {
+			result.add(Long.parseLong(s.trim()));
 		}
 		return result;
 	}

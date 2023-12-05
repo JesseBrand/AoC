@@ -1,5 +1,6 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.countTotal;
 import static nl.jessebrand.aoc.Utils.readFile;
 import static nl.jessebrand.aoc.aoc2023.D04.parseCards;
 
@@ -32,11 +33,7 @@ public class D04b {
 			}
 			System.out.println(String.format("After card %s (%d matches) * %d: %s", card.id(), matches, cardCount[card.id()], Arrays.toString(cardCount)));
 		}
-		int total = 0;
-		for (final int count : cardCount) {
-			total += count;
-		}
-		System.out.println(total);
+		System.out.println(countTotal(cardCount));
 	}
 
 }

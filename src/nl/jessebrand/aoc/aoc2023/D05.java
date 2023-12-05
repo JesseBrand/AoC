@@ -24,16 +24,14 @@ public class D05 {
 			System.out.println("Seed " + currentValue);
 			for (final Converter conv : converters) {
 				currentValue = conv.convert(currentValue);
-				System.out.println("Converter " + conv.name() + " converted to value " + currentValue);
+				System.out.println(" Converter " + conv.name() + " converted to value " + currentValue);
 			}
-			if (currentValue < lowest) {
-				lowest = currentValue;
-			}
+			lowest = Math.min(lowest, currentValue);
 		}
 		System.out.println("Lowest = " + lowest);
 	}
 
-	static List<Converter> parseConverters(List<String> lines) {
+	static List<Converter> parseConverters(final List<String> lines) {
 		final List<Converter> converters = new ArrayList<>();
 		Converter converter = null;
 		for (int i = 2; i < lines.size(); i++) {
@@ -53,8 +51,8 @@ public class D05 {
 
 	static class Converter {
 		
-		private List<ConversionRange> ranges = new ArrayList<>();
-		private String name;
+		private final List<ConversionRange> ranges = new ArrayList<>();
+		private final String name;
 		
 		Converter(String name) {
 			this.name = name;
@@ -68,8 +66,8 @@ public class D05 {
 			ranges.add(range);
 		}
 		
-		long convert(long sourceValue) {
-			for (ConversionRange range : ranges) {
+		long convert(final long sourceValue) {
+			for (final ConversionRange range : ranges) {
 				if (sourceValue >= range.sourceStart() && sourceValue < range.sourceStart() + range.rangeLength()) {
 					return range.destinationStart() + sourceValue - range.sourceStart();
 				}
@@ -77,15 +75,15 @@ public class D05 {
 			return sourceValue;
 		}
 		
-		long getRemainingRangeLength(long seedValue) {
-			for (ConversionRange range : ranges) {
+		long getRemainingRangeLength(final long seedValue) {
+			for (final ConversionRange range : ranges) {
 				if (seedValue >= range.sourceStart() && seedValue < range.sourceStart() + range.rangeLength()) {
-					System.out.println(String.format(" %d in range %d - %d. Range left: %d", seedValue, range.sourceStart(), range.sourceStart() + range.rangeLength(), range.rangeLength() - (seedValue - range.sourceStart())));
+					System.out.println(String.format(" %s: %d in range %d - %d. Range left: %d", name(), seedValue, range.sourceStart(), range.sourceStart() + range.rangeLength(), range.rangeLength() - (seedValue - range.sourceStart())));
 					return range.rangeLength() - (seedValue - range.sourceStart());
 				}
 			}
 			long lowestNext = Long.MAX_VALUE;
-			for (ConversionRange range : ranges) {
+			for (final ConversionRange range : ranges) {
 				if (range.sourceStart() > seedValue) {
 					lowestNext = Math.min(lowestNext, range.sourceStart());
 				}
@@ -96,7 +94,6 @@ public class D05 {
 	}
 	
 	static record ConversionRange(long destinationStart, long sourceStart, long rangeLength) {
-
 		public ConversionRange(List<Long> longs) {
 			this(longs.get(0), longs.get(1), longs.get(2));
 			assertTrue(longs.size() == 3);

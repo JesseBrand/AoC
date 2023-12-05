@@ -14,11 +14,7 @@ public class D05b {
 
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d05");
-		System.out.println(lines);
-		
 		final List<SeedRange> seedRanges = parseSeeds(parseLongsFromString(lines.get(0).substring("seeds: ".length())));
-		System.out.println(seedRanges);
-		
 		final List<Converter> converters = parseConverters(lines);
 		
 		long lowest = Long.MAX_VALUE;
@@ -32,15 +28,13 @@ public class D05b {
 					remainingRangeLength = Math.min(remainingRangeLength, conv.getRemainingRangeLength(currentValue));
 					currentValue = conv.convert(currentValue);
 				}
-				System.out.println("Remaining range = " + remainingRangeLength);
-				if (remainingRangeLength == Long.MAX_VALUE) {
-					break;
-				}
+				System.out.println(" Lowest remaining range = " + remainingRangeLength);
 				seedValue += remainingRangeLength;
 				if (currentValue < lowest) {
 					lowest = currentValue;
 				}
 			}
+			System.out.println();
 		}
 		System.out.println("Lowest = " + lowest);
 	}

@@ -292,4 +292,14 @@ public class Utils {
 		return result;
 	}
 
+	public static List<Long> parseLongsFromString(final String string) {
+		final List<Long> result = new ArrayList<>();
+		for (String s : string.split("\\ ")) {
+			if (!s.isBlank()) {
+				result.add(Long.parseLong(s.trim()));
+			}
+		}
+		return result;
+	}
+
 }

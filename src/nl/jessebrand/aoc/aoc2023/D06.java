@@ -17,19 +17,31 @@ public class D06 {
 
 		int total = 1;
 		for (Race race : races) {
-			int raceCount = 0;
-			for (int i = 0; i < race.time(); i++) {
-				int totalTime = i * (race.time() - i);
-				if (totalTime > race.distance()) {
-					raceCount++;
-				}
-			}
-			System.out.println(raceCount);
-			total *= raceCount;
+			total *= countMethod(race);
 		}
 		System.out.println(total);
 	}
-	
+
+	static int countMethod(Race race) {
+		int raceCount = 0;
+		for (int i = 0; i < race.time(); i++) {
+			long totalTime = i * (race.time() - i);
+			if (totalTime > race.distance()) {
+				raceCount++;
+			}
+		}
+		System.out.println(raceCount);
+		return raceCount;
+	}
+
+//	static int mathMethod(Race race) {
+//		int result = 0;
+////		x * (time - x) = distance
+////		x * (time - x) - distance = 0
+//		System.out.println(result);
+//		return result;
+//	}
+
 	private static List<Race> parseRaces(List<String> lines) {
 		List<Integer> times = parseIntsFromString(lines.get(0).substring(lines.get(0).indexOf(':') + 1));
 		List<Integer> distances = parseIntsFromString(lines.get(1).substring(lines.get(1).indexOf(':') + 1));
@@ -40,6 +52,6 @@ public class D06 {
 		return races;
 	}
 
-	private record Race(int time, int distance) {}
+	static record Race(long time, long distance) {}
 
 }

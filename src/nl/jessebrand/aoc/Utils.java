@@ -298,4 +298,10 @@ public class Utils {
 		return result;
 	}
 
+	public static double[] quadraticFormula(int a, long b, long c) {
+		double val1 = (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+		double val2 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+		return new double[] {val1, val2};
+	}
+
 }

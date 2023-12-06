@@ -1,11 +1,13 @@
 package nl.jessebrand.aoc.aoc2023;
 
-import static nl.jessebrand.aoc.Utils.parseIntsFromString;
-import static nl.jessebrand.aoc.Utils.readFile;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static nl.jessebrand.aoc.Utils.parseIntsFromString;
+import static nl.jessebrand.aoc.Utils.quadraticFormula;
+import static nl.jessebrand.aoc.Utils.readFile;
 
 public class D06 {
 	
@@ -17,12 +19,12 @@ public class D06 {
 
 		int total = 1;
 		for (Race race : races) {
-			total *= countMethod(race);
+			total *= mathMethod(race);
 		}
 		System.out.println(total);
 	}
 
-	static int countMethod(Race race) {
+	static int countMethod(final Race race) {
 		int raceCount = 0;
 		for (int i = 0; i < race.time(); i++) {
 			long totalTime = i * (race.time() - i);
@@ -34,13 +36,16 @@ public class D06 {
 		return raceCount;
 	}
 
-//	static int mathMethod(Race race) {
-//		int result = 0;
-////		x * (time - x) = distance
-////		x * (time - x) - distance = 0
-//		System.out.println(result);
-//		return result;
-//	}
+	static int mathMethod(final Race race) {
+//		x * (time - x) - distance = 0
+//		a = 1; b = -time; c = distance
+		final double[] formulaResult = quadraticFormula(1, -race.time(), race.distance());
+		final int result = (int) Math.ceil(formulaResult[1]) - (int) Math.floor(formulaResult[0]) - 1;;
+		System.out.println(String.format("%s -> %d-%d -> %d",
+				Arrays.toString(formulaResult),
+				(int) Math.floor(formulaResult[0]), (int) Math.ceil(formulaResult[1]), result));
+		return result;
+	}
 
 	private static List<Race> parseRaces(List<String> lines) {
 		List<Integer> times = parseIntsFromString(lines.get(0).substring(lines.get(0).indexOf(':') + 1));

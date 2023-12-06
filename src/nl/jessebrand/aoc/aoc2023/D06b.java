@@ -14,7 +14,7 @@ public class D06b {
 		final List<String> lines = readFile("2023/d06");
 		System.out.println(lines);
 		final Race race = parseRace(lines);
-		final int total = D06.countMethod(race);
+		final int total = D06.mathMethod(race);
 		System.out.println(total);
 	}
 

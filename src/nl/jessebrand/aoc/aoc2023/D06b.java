@@ -12,13 +12,13 @@ public class D06b {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d06");
-		System.out.println(lines);
 		final Race race = parseRace(lines);
+		System.out.println(race);
 		final int total = D06.mathMethod(race);
 		System.out.println(total);
 	}
 
-	private static Race parseRace(List<String> lines) {
+	private static Race parseRace(final List<String> lines) {
 		final List<Integer> times = parseIntsFromString(lines.get(0).substring(lines.get(0).indexOf(':') + 1));
 		final List<Integer> distances = parseIntsFromString(lines.get(1).substring(lines.get(1).indexOf(':') + 1));
 		return new Race(Long.parseLong(glue("", times)), Long.parseLong(glue("", distances)));

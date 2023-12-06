@@ -15,20 +15,14 @@ public class D04 {
 
 		int total = 0;
 		for (final Card card : cards) {
-			int score = 0;
 			int matches = 0;
 			for (final int yours : card.yourNumbers()) {
 				if (card.winningNumbers().contains(yours)) {
-					if (score == 0) {
-						score = 1;
-					} else {
-						score *= 2;
-					}
 					matches++;
 				}
 			}
-			total += score;
-			System.out.println(String.format("Card %s has %d matches: %d score", card.id(), matches, score));
+			total += Math.pow(2, matches - 1);
+			System.out.println(String.format("Card %s has %d matches: %d score", card.id(), matches, (int) Math.pow(2, matches - 1)));
 		}
 		System.out.println(total);
 	}

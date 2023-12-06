@@ -1,8 +1,10 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.parseIntsFromString;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class D06 {
@@ -10,6 +12,34 @@ public class D06 {
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d06");
 		System.out.println(lines);
+		List<Race> races = parseRaces(lines);
+		System.out.println(races);
+
+		int total = 1;
+		for (Race race : races) {
+			int raceCount = 0;
+			for (int i = 0; i < race.time(); i++) {
+				int totalTime = i * (race.time() - i);
+				if (totalTime > race.distance()) {
+					raceCount++;
+				}
+			}
+			System.out.println(raceCount);
+			total *= raceCount;
+		}
+		System.out.println(total);
 	}
+	
+	private static List<Race> parseRaces(List<String> lines) {
+		List<Integer> times = parseIntsFromString(lines.get(0).substring(lines.get(0).indexOf(':') + 1));
+		List<Integer> distances = parseIntsFromString(lines.get(1).substring(lines.get(1).indexOf(':') + 1));
+		List<Race> races = new ArrayList<>();
+		for (int i = 0; i < times.size(); i++) {
+			races.add(new Race(times.get(i), distances.get(i)));
+		}
+		return races;
+	}
+
+	private record Race(int time, int distance) {}
 
 }

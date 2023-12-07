@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class D07 {
+public class D07b {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d07");
@@ -21,6 +21,7 @@ public class D07 {
 		int count = 1;
 		for (CardSet set : cardSets) {
 			total += set.bet() * count;
+//			System.out.println(String.format("%s: %d * %d = %d", set.cards(), count, set.bet(), set.bet() * count));
 			System.out.println(String.format("%s: %d * %d = %d Count = %s Rank = %d", set.cards(), count, set.bet(), set.bet() * count, Arrays.toString(countSame(set)), calcRankType(set)));
 			count++;
 		}
@@ -66,23 +67,27 @@ public class D07 {
 
 	private static int calcRankType(CardSet set) {
 		int[] same = countSame(set);
-		if (same.length == 1) {
-			return 6;
+		if (same.length == 1 || same.length == 0) {
+			return 6; // 5 of kind
 		}
 		if (same.length == 2) {
-			if (same[0] == 4 || same[1] == 4) {
-				return 5;
+			if (same[0] == 1 || same[1] == 1) {
+				// KKKK1
+				// KKJJ1
+				return 5; // 4 of kind
 			}
-			return 4;
+			return 4; // full house
 		}
+		
 		if (same.length == 3) {
-			if (same[0] == 3 || same[1] == 3 || same[2] == 3) {
-				return 3;
+			if (same[0] == 3 || same[1] == 3 || same[2] == 3
+					|| same[0]+same[1]+same[2] < 5) {
+				return 3; // 3 of kind
 			}
-			return 2;
+			return 2; // two pairs
 		}
 		if (same.length == 4) {
-			return 1;
+			return 1; // one pair
 		}
 		return 0;
 	}
@@ -92,16 +97,16 @@ public class D07 {
 		case 'A': return 13;
 		case 'K': return 12;
 		case 'Q': return 11;
-		case 'J': return 10;
-		case 'T': return 9;
-		case '9': return 8;
-		case '8': return 7;
-		case '7': return 6;
-		case '6': return 5;
-		case '5': return 4;
-		case '4': return 3;
-		case '3': return 2;
-		case '2': return 1;
+		case 'T': return 10;
+		case '9': return 9;
+		case '8': return 8;
+		case '7': return 7;
+		case '6': return 6;
+		case '5': return 5;
+		case '4': return 4;
+		case '3': return 3;
+		case '2': return 2;
+		case 'J': return 1;
 		default: throw new IllegalStateException("Missing "+ c);
 		}
 	}
@@ -109,6 +114,9 @@ public class D07 {
 	private static int[] countSame(CardSet set) {
 		Map<Character, Integer> map = new HashMap<>();
 		for (char c : set.cards().toCharArray()) {
+			if (c == 'J') {
+				continue;
+			}
 			if (map.containsKey(c)) {
 				map.put(c, map.get(c) + 1);
 			} else {
@@ -121,10 +129,7 @@ public class D07 {
 			result[i] = map.get(key);
 			i++;
 		}
-//		System.out.println(set.cards() + " : " + Arrays.toString(result));
 		return result;
 	}
 }
 
-// 257021927
-// 256716067

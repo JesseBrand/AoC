@@ -1,14 +1,16 @@
 package nl.jessebrand.aoc.aoc2023;
 
 import static nl.jessebrand.aoc.Utils.readFile;
+import static nl.jessebrand.aoc.aoc2023.D07.parseCardSets;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import nl.jessebrand.aoc.aoc2023.D07.CardSet;
 
 public class D07b {
 	
@@ -28,21 +30,6 @@ public class D07b {
 		System.out.println(total);
 	}
 	
-	private static List<CardSet> parseCardSets(List<String> lines) {
-		final List<CardSet> result = new ArrayList<>();
-		for (String line : lines) {
-			result.add(parseCardSet(line));
-		}
-		return result;
-	}
-
-	private static CardSet parseCardSet(String line) {
-		String[] split = line.split("\\ ");
-		return new CardSet(split[0], Integer.parseInt(split[1]));
-	}
-
-	private static record CardSet(String cards, int bet) {}
-
 	private static class CardSorter implements Comparator<CardSet> {
 
 		// if o1 < o2 then -1

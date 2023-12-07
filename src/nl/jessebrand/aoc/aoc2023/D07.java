@@ -27,7 +27,7 @@ public class D07 {
 		System.out.println(total);
 	}
 	
-	private static List<CardSet> parseCardSets(List<String> lines) {
+	static List<CardSet> parseCardSets(List<String> lines) {
 		final List<CardSet> result = new ArrayList<>();
 		for (String line : lines) {
 			result.add(parseCardSet(line));
@@ -40,7 +40,7 @@ public class D07 {
 		return new CardSet(split[0], Integer.parseInt(split[1]));
 	}
 
-	private static record CardSet(String cards, int bet) {}
+	static record CardSet(String cards, int bet) {}
 
 	private static class CardSorter implements Comparator<CardSet> {
 
@@ -125,6 +125,3 @@ public class D07 {
 		return result;
 	}
 }
-
-// 257021927
-// 256716067

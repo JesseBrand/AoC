@@ -1,14 +1,13 @@
 package nl.jessebrand.aoc.aoc2023;
 
 import static nl.jessebrand.aoc.Utils.readFile;
+import static nl.jessebrand.aoc.aoc2023.D07.countSame;
 import static nl.jessebrand.aoc.aoc2023.D07.parseCardSets;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import nl.jessebrand.aoc.aoc2023.D07.CardSet;
 
@@ -24,7 +23,7 @@ public class D07b {
 		for (CardSet set : cardSets) {
 			total += set.bet() * count;
 //			System.out.println(String.format("%s: %d * %d = %d", set.cards(), count, set.bet(), set.bet() * count));
-			System.out.println(String.format("%s: %d * %d = %d Count = %s Rank = %d", set.cards(), count, set.bet(), set.bet() * count, Arrays.toString(countSame(set)), calcRankType(set)));
+			System.out.println(String.format("%s: %d * %d = %d Count = %s Rank = %d", set.cards(), count, set.bet(), set.bet() * count, Arrays.toString(countSame(set, true)), calcRankType(set)));
 			count++;
 		}
 		System.out.println(total);
@@ -34,7 +33,7 @@ public class D07b {
 
 		// if o1 < o2 then -1
 		@Override
-		public int compare(CardSet o1, CardSet o2) {
+		public int compare(final CardSet o1, final CardSet o2) {
 			int rankType1 = calcRankType(o1);
 			int rankType2 = calcRankType(o2);
 			if (rankType1 != rankType2) {
@@ -52,8 +51,8 @@ public class D07b {
 		
 	}
 
-	private static int calcRankType(CardSet set) {
-		int[] same = countSame(set);
+	private static int calcRankType(final CardSet set) {
+		final int[] same = countSame(set, true);
 		if (same.length == 1 || same.length == 0) {
 			return 6; // 5 of kind
 		}
@@ -79,44 +78,7 @@ public class D07b {
 		return 0;
 	}
 
-	public static int getCardValue(char c) {
-		switch (c) {
-		case 'A': return 13;
-		case 'K': return 12;
-		case 'Q': return 11;
-		case 'T': return 10;
-		case '9': return 9;
-		case '8': return 8;
-		case '7': return 7;
-		case '6': return 6;
-		case '5': return 5;
-		case '4': return 4;
-		case '3': return 3;
-		case '2': return 2;
-		case 'J': return 1;
-		default: throw new IllegalStateException("Missing "+ c);
-		}
-	}
-
-	private static int[] countSame(CardSet set) {
-		Map<Character, Integer> map = new HashMap<>();
-		for (char c : set.cards().toCharArray()) {
-			if (c == 'J') {
-				continue;
-			}
-			if (map.containsKey(c)) {
-				map.put(c, map.get(c) + 1);
-			} else {
-				map.put(c, 1);
-			}
-		}
-		int[] result = new int[map.size()];
-		int i = 0;
-		for (char key : map.keySet()) {
-			result[i] = map.get(key);
-			i++;
-		}
-		return result;
+	public static int getCardValue(final char c) {
+		return "J23456789TQKA".indexOf(c);
 	}
 }
-

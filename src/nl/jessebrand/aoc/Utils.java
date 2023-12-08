@@ -1,5 +1,7 @@
 package nl.jessebrand.aoc;
 
+import static nl.jessebrand.aoc.Utils.findMax;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -302,6 +304,25 @@ public class Utils {
 		double val1 = (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a);
 		double val2 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
 		return new double[] {val1, val2};
+	}
+
+	public static long calcCommonMultiple(final List<Integer> values) {
+		long attempt = findMax(values);
+		final List<Integer> others = new ArrayList<>(values);
+		others.remove((Integer) (int) attempt);
+		while (true) {
+			boolean found = true;
+			for (int val : others) {
+				if (attempt % val != 0) {
+					found = false;
+					break;
+				}
+			}
+			if (found) {
+				return attempt;
+			}
+			attempt += values.get(0);
+		}
 	}
 
 }

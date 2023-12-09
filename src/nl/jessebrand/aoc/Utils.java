@@ -325,4 +325,13 @@ public class Utils {
 		}
 	}
 
+	public static boolean allEquals(final List<Integer> range, final int expected) {
+		for (final int i : range) {
+			if (i != expected) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }

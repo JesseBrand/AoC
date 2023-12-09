@@ -1,5 +1,6 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.allEquals;
 import static nl.jessebrand.aoc.Utils.parseIntsFromString;
 import static nl.jessebrand.aoc.Utils.readFile;
 
@@ -11,8 +12,9 @@ public class D09 {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d09");
-		System.out.println(lines);
 		final List<List<Integer>> ranges = parseRanges(lines);
+		System.out.println(ranges);
+
 		long resultA = 0;
 		long resultB = 0;
 		for (List<Integer> range: ranges) {
@@ -41,16 +43,16 @@ public class D09 {
 		}
 	}
 
-	private static List<List<Integer>> parseRanges(List<String> lines) {
+	private static List<List<Integer>> parseRanges(final List<String> lines) {
 		final List<List<Integer>> result = new ArrayList<>();
-		for (String line : lines) {
+		for (final String line : lines) {
 			result.add(parseIntsFromString(line));
 		}
 		return result;
 	}
 
-	private static int predictNext(List<Integer> range, NextValueGenerator valueGenerator) {
-		if (areAllZeroes(range)) {
+	private static int predictNext(final List<Integer> range, final NextValueGenerator valueGenerator) {
+		if (allEquals(range, 0)) {
 			return 0;
 		}
 		final List<Integer> newRange = new ArrayList<>();
@@ -59,16 +61,6 @@ public class D09 {
 		}
 		int rangeNext = predictNext(newRange, valueGenerator);
 		return valueGenerator.nextValue(range, rangeNext);
-	}
-
-	private static boolean areAllZeroes(List<Integer> range) {
-		boolean result = true;
-		for (int i : range) {
-			if (i != 0) {
-				result = false;
-			}
-		}
-		return result;
 	}
 
 }

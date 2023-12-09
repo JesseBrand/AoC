@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class D09 {
+public class D09b {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d09");
@@ -38,7 +38,7 @@ public class D09 {
 			newRange.add(range.get(i) - range.get(i - 1));
 		}
 		int rangeNext = predictNext(newRange);
-		return range.get(0) - rangeNext;
+		return range.get(range.size() - 1) + rangeNext;
 	}
 
 	private static boolean allZeroes(List<Integer> range) {

@@ -1,18 +1,20 @@
 package nl.jessebrand.aoc.aoc2023;
 
 import static nl.jessebrand.aoc.Utils.allEquals;
-import static nl.jessebrand.aoc.Utils.parseIntsFromString;
+import static nl.jessebrand.aoc.Utils.parseLines;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.jessebrand.aoc.Utils;
+
 public class D09 {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d09");
-		final List<List<Integer>> ranges = parseRanges(lines);
+		final List<List<Integer>> ranges = parseLines(lines, Utils::parseIntsFromString);
 		System.out.println(ranges);
 
 		long resultA = 0;
@@ -41,14 +43,6 @@ public class D09 {
 		public int nextValue(final List<Integer> range, final int nextPrediction) {
 			return range.get(0) - nextPrediction;
 		}
-	}
-
-	private static List<List<Integer>> parseRanges(final List<String> lines) {
-		final List<List<Integer>> result = new ArrayList<>();
-		for (final String line : lines) {
-			result.add(parseIntsFromString(line));
-		}
-		return result;
 	}
 
 	private static int predictNext(final List<Integer> range, final NextValueGenerator valueGenerator) {

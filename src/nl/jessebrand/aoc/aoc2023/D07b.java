@@ -1,8 +1,8 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.parseLines;
 import static nl.jessebrand.aoc.Utils.readFile;
 import static nl.jessebrand.aoc.aoc2023.D07.countSame;
-import static nl.jessebrand.aoc.aoc2023.D07.parseCardSets;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ public class D07b {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d07");
-		final List<CardSet> cardSets = parseCardSets(lines);
+		final List<CardSet> cardSets = parseLines(lines, D07::parseCardSet);
 		cardSets.sort(new CardSorter());
 
 		int total = 0;

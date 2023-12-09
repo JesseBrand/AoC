@@ -1,17 +1,17 @@
 package nl.jessebrand.aoc.aoc2023;
 
 import static nl.jessebrand.aoc.Utils.parseIntsFromString;
+import static nl.jessebrand.aoc.Utils.parseLines;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class D04 {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d04");
-		final List<Card> cards = parseCards(lines);
+		final List<Card> cards = parseLines(lines, D04::parseCard);
 
 		int total = 0;
 		for (final Card card : cards) {
@@ -29,15 +29,7 @@ public class D04 {
 
 	static record Card(int id, List<Integer> yourNumbers, List<Integer> winningNumbers) {}
 
-	static List<Card> parseCards(final List<String> lines) {
-		final List<Card> result = new ArrayList<>();
-		for (final String line : lines) {
-			result.add(parseCard(line));
-		}
-		return result;
-	}
-
-	private static Card parseCard(final String line) {
+	static Card parseCard(final String line) {
 		String tmp = line.substring("Card ".length());
 		final int i = tmp.indexOf(":");
 		final int id = Integer.parseInt(tmp.substring(0, i).trim());

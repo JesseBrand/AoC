@@ -1,5 +1,6 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.parseLines;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ public class D02 {
 
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d02");
-		final List<Game> games = parseGames(lines);
+		final List<Game> games = parseLines(lines, D02::parseGame);
 //		System.out.println(games);
 		
 		int resultA = 0;
@@ -39,15 +40,6 @@ public class D02 {
 		System.out.println("a: " + resultA);
 		System.out.println("b: " + resultB);
 	}
-
-	private static List<Game> parseGames(List<String> lines) {
-		List<Game> result = new ArrayList<>();
-		for (String line : lines) {
-			result.add(parseGame(line));
-		}
-		return result;
-	}
-
 
 	private static Game parseGame(String line) {
 		String tmp = line.substring("Game ".length());

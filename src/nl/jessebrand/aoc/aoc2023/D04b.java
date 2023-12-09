@@ -1,8 +1,8 @@
 package nl.jessebrand.aoc.aoc2023;
 
 import static nl.jessebrand.aoc.Utils.countTotal;
+import static nl.jessebrand.aoc.Utils.parseLines;
 import static nl.jessebrand.aoc.Utils.readFile;
-import static nl.jessebrand.aoc.aoc2023.D04.parseCards;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class D04b {
 	
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d04");
-		final List<Card> cards = parseCards(lines);
+		final List<Card> cards = parseLines(lines, D04::parseCard);
 
 		final int[] cardCount = new int[cards.size() + 1];
 		for (final Card card : cards) {

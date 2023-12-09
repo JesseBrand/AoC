@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Utils {
     public static String glue(String sep, List<?> values) {
@@ -332,6 +334,10 @@ public class Utils {
 			}
 		}
 		return true;
+	}
+
+	public static <T> List<T> parseLines(final List<String> lines, final Function<String, T> function) {
+		return lines.stream().map(function).collect(Collectors.toList());
 	}
 
 }

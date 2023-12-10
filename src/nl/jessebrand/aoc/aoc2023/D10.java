@@ -116,16 +116,20 @@ public class D10 {
 		
 		private final Node[][] nodes;
 		
-		Grid(int width, int height) {
+		Grid(final int width, final int height) {
 			nodes = new Node[height][width];
 		}
 		
-		public void setPathLength(int x, int y, int pathLength) {
+		void setPathLength(final int x, final int y, final int pathLength) {
 			get(x, y).setPathLength(pathLength);			
 		}
 
-		void update(int x, int y, char c) {
+		void update(final int x, final int y, final char c) {
 			nodes[y][x].setChar(c);
+		}
+
+		void update(final Point p, final char c) {
+			update(p.x(), p.y(), c);
 		}
 		
 		void set(int x, int y, char c) {
@@ -214,5 +218,4 @@ public class D10 {
 		}
 	}
 	
-
 }

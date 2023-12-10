@@ -20,7 +20,6 @@ public class D10b {
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2023/d10");
 		final Grid grid = parseGrid(lines);
-//		System.out.println(grid);
 
 		final Point start = findStart(grid);
 		grid.setPathLength(start.x(), start.y(), 0);
@@ -29,7 +28,7 @@ public class D10b {
 		findMainLoop(grid, start);
 		
 		eraseNotPartOfLoop(grid);
-		grid.update(start.x(), start.y(), 'J');
+		grid.update(start, 'J');
 		fillInside(grid);
 		System.out.println(grid);
 		int result = countPoints(grid);
@@ -66,12 +65,7 @@ public class D10b {
 		final D8 fillDir = follow.fillDir();
 		final Direction dir = follow.dir();
 		fillNeighboursInside(grid, p, fillDir);
-		final Point next = switch(dir) {
-			case NORTH -> new Point(p.x(), p.y() - 1);
-			case EAST -> new Point(p.x() + 1, p.y());
-			case SOUTH -> new Point(p.x(), p.y() + 1);
-			case WEST -> new Point(p.x() - 1, p.y());
-		};
+		final Point next = p.apply(dir);
 		final Direction newDir = switch (dir) {
 			case NORTH -> switch (grid.getCharacter(next)) {
 				case '7' -> Direction.WEST;
@@ -144,9 +138,9 @@ public class D10b {
 		return result;
 	}
 
-	private static void fillReachable(Grid grid, Point p) {
+	private static void fillReachable(final Grid grid, final Point p) {
 		Set<Point> outsidePoints = new HashSet<>();
-		if (p.x() < 0 || p.x() >= grid.width() || p.y() < 0 || p.y() >= grid.height() || grid.getCharacter(p.x(), p.y()) != '.') {
+		if (grid.getCharacter(p.x(), p.y()) != '.') {
 			return;
 		}
 		outsidePoints.add(p);
@@ -155,23 +149,15 @@ public class D10b {
 		}
 	}
 
-	private static Set<Point> findOutsideNeighbours(Grid grid, Set<Point> outsidePoints) {
+	private static Set<Point> findOutsideNeighbours(final Grid grid, final Set<Point> outsidePoints) {
 		Set<Point> result = new HashSet<>();
 		for (Point p : outsidePoints) {
-			int x = p.x();
-			int y = p.y();
-			grid.update(x, y, 'O');
-			if (x >= 1 && grid.getCharacter(x - 1, y) == '.') {
-				result.add(new Point(x - 1, y));
-			}
-			if (x < grid.width() - 1 && grid.getCharacter(x + 1, y) == '.') {
-				result.add(new Point(x + 1, y));
-			}
-			if (y >= 1 && grid.getCharacter(x, y - 1) == '.') {
-				result.add(new Point(x, y - 1));
-			}
-			if (y < grid.height() - 1 && grid.getCharacter(x, y + 1) == '.') {
-				result.add(new Point(x, y + 1));
+			grid.update(p, 'O');
+			for (final Direction dir : Direction.values()) {
+				final Point newP = p.apply(dir);
+				if (grid.getCharacter(newP) == '.') {
+					result.add(newP);
+				}
 			}
 		}
 		return result;

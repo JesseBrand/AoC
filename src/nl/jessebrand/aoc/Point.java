@@ -14,4 +14,8 @@ public record Point(int x, int y) implements HasLocation {
 	public String toString() {
 		return String.format("Point[%d,%d]", x(), y());
 	}
+
+	public Point apply(final Direction dir) {
+		return new Point(x() + dir.getXInc(), y() + dir.getYInc());
+	}
 }

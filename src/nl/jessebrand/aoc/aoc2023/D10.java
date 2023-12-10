@@ -33,7 +33,7 @@ public class D10 {
 	}
 	
 	static void findMainLoop(final Grid grid, final Point start) {
-		List<Point> next = findNeighbours(grid, start, grid.get(start.x(), start.y()));
+		List<Point> next = findNeighbours(grid, start);
 		while (!next.isEmpty()) {
 			next = findNeighbours(grid, next);
 		}
@@ -52,38 +52,38 @@ public class D10 {
 	private static List<Point> findNeighbours(Grid grid, List<Point> next) {
 		final List<Point> result = new ArrayList<>();
 		for (Point point : next) {
-			Node node = grid.get(point.x(), point.y());
-			result.addAll(findNeighbours(grid, point, node));
+			result.addAll(findNeighbours(grid, point));
 		}
 		return result;
 	}
 
-	private static List<Point> findNeighbours(Grid grid, Point p, Node node) {
-		int x = p.x();
-		int y = p.y();
-		int pathLength = node.pathLength();
+	private static List<Point> findNeighbours(Grid grid, Point p) {
+		final int x = p.x();
+		final int y = p.y();
+		final char c = grid.getCharacter(x, y);
+		final int pathLength = grid.getPathLength(x, y);
 		final List<Point> result = new ArrayList<>();
 		// left
 		if (x >= 1 && grid.get(x - 1, y).pathLength() == -1 && LEFT_OPTIONS.contains(grid.get(x - 1, y).c())
-				&& (node.c() == 'S' || RIGHT_OPTIONS.contains(node.c()))) {
+				&& RIGHT_OPTIONS.contains(c)) {
 			grid.setPathLength(x - 1, y, pathLength + 1);
 			result.add(new Point(x - 1, y));
 		}
 		// right
 		if (x < grid.width() - 1 && grid.get(x + 1, y).pathLength() == -1 && RIGHT_OPTIONS.contains(grid.get(x + 1, y).c())
-				&& (node.c() == 'S' || LEFT_OPTIONS.contains(node.c()))) {
+				&& LEFT_OPTIONS.contains(c)) {
 			grid.setPathLength(x + 1, y, pathLength + 1);
 			result.add(new Point(x + 1, y));
 		}
 		// up
 		if (y >= 1 && grid.get(x, y - 1).pathLength() == -1 && UP_OPTIONS.contains(grid.get(x, y - 1).c())
-				&& (node.c() == 'S' || DOWN_OPTIONS.contains(node.c()))) {
+				&& DOWN_OPTIONS.contains(c)) {
 			grid.setPathLength(x, y - 1, pathLength + 1);
 			result.add(new Point(x, y - 1));
 		}
 		// down
 		if (y < grid.height() - 1 && grid.get(x, y + 1).pathLength() == -1 && DOWN_OPTIONS.contains(grid.get(x, y + 1).c())
-				&& (node.c() == 'S' || UP_OPTIONS.contains(node.c()))) {
+				&& UP_OPTIONS.contains(c)) {
 			grid.setPathLength(x, y + 1, pathLength + 1);
 			result.add(new Point(x, y + 1));
 		}
@@ -135,8 +135,28 @@ public class D10 {
 			nodes[y][x] = new Node(c);
 		}
 		
-		Node get(int x, int y) {
+		private Node get(int x, int y) {
 			return nodes[y][x];
+		}
+		
+		private Node safeGet(final int x, final int y) {
+			if (x < 0 || x >= width() || y < 0 || y >= height()) {
+				return null;
+			}
+			return get(x, y);
+		}
+		
+		char getCharacter(final int x, final int y) {
+			final Node n = safeGet(x, y);
+			return n == null ? (char) 0 : n.c();
+		}
+		
+		char getCharacter(final Point p) {
+			return getCharacter(p.x(), p.y());
+		}
+		
+		int getPathLength(final int x, final int y) {
+			return get(x, y).pathLength();
 		}
 		
 		Node get(Point p) {
@@ -162,36 +182,37 @@ public class D10 {
 			}
 			return sb.toString();
 		}
+
+		private class Node {
+			private char c;
+			private int pathLength = -1;
+			
+			Node(char c) {
+				this.c = c;
+			}
+			
+			void setPathLength(final int length) {
+				this.pathLength = length;
+			}
+			
+			void setChar(final char c) {
+				this.c = c;
+			}
+			
+			char c() {
+				return c;
+			}
+			
+			int pathLength() {
+				return pathLength;
+			}
+			
+			@Override
+			public String toString() {
+				return "" + c;
+			}
+		}
 	}
 	
-	static class Node {
-		private char c;
-		private int pathLength = -1;
-		
-		Node(char c) {
-			this.c = c;
-		}
-		
-		void setPathLength(final int length) {
-			this.pathLength = length;
-		}
-		
-		void setChar(final char c) {
-			this.c = c;
-		}
-		
-		char c() {
-			return c;
-		}
-		
-		int pathLength() {
-			return pathLength;
-		}
-		
-		@Override
-		public String toString() {
-			return "" + c;
-		}
-	}
 
 }

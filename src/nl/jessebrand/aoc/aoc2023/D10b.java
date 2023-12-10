@@ -6,6 +6,7 @@ import static nl.jessebrand.aoc.aoc2023.D10.findStart;
 import static nl.jessebrand.aoc.aoc2023.D10.parseGrid;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,6 @@ import java.util.Set;
 import nl.jessebrand.aoc.Direction;
 import nl.jessebrand.aoc.Point;
 import nl.jessebrand.aoc.aoc2023.D10.Grid;
-import nl.jessebrand.aoc.aoc2023.D10.Node;
 
 public class D10b {
 
@@ -40,12 +40,12 @@ public class D10b {
 		// determine start
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
-				final char c = grid.get(x, y).c();
+				final char c = grid.getCharacter(x, y);
 				if (c != 'O' && c != '.') {
 					Point start = new Point(x, y);
 					NextFollow follow;
 					if (c == 'F') {
-						follow = new NextFollow(start, D8.UP_AND_LEFT, Direction.EAST);
+						follow = new NextFollow(start, D8.NORTH_AND_WEST, Direction.EAST);
 					} else {
 						throw new IllegalStateException(String.format("Expected F but found %c at %d,%d", c, x, y));
 					}
@@ -73,52 +73,52 @@ public class D10b {
 			case WEST -> new Point(p.x() - 1, p.y());
 		};
 		final Direction newDir = switch (dir) {
-			case NORTH -> switch (grid.get(next).c()) {
+			case NORTH -> switch (grid.getCharacter(next)) {
 				case '7' -> Direction.WEST;
 				case '|' -> Direction.NORTH;
 				case 'F' -> Direction.EAST;
 				default -> throw new IllegalStateException();
 			};
-			case EAST -> switch (grid.get(next).c()) {
+			case EAST -> switch (grid.getCharacter(next)) {
 				case 'J' -> Direction.NORTH;
 				case '-' -> Direction.EAST;
 				case '7' -> Direction.SOUTH;
 				default -> throw new IllegalStateException();
 			};
-			case SOUTH -> switch (grid.get(next).c()) {
+			case SOUTH -> switch (grid.getCharacter(next)) {
 				case 'J' -> Direction.WEST;
 				case '|' -> Direction.SOUTH;
 				case 'L' -> Direction.EAST;
 				default -> throw new IllegalStateException();
 			};
-			case WEST -> switch (grid.get(next).c()) {
+			case WEST -> switch (grid.getCharacter(next)) {
 				case 'L' -> Direction.NORTH;
 				case '-' -> Direction.WEST;
 				case 'F' -> Direction.SOUTH;
 				default -> throw new IllegalStateException();
 			};
 		};
-		final D8 newFillDir = switch (grid.get(next).c()) {
-			case '-' -> fillDir == D8.UP || fillDir == D8.UP_AND_LEFT || fillDir == D8.UP_AND_RIGHT ? D8.UP : D8.DOWN;
-			case '|' -> fillDir == D8.LEFT || fillDir == D8.UP_AND_LEFT || fillDir == D8.DOWN_AND_LEFT ? D8.LEFT : D8.RIGHT;
+		final D8 newFillDir = switch (grid.getCharacter(next)) {
+			case '-' -> fillDir == D8.NORTH || fillDir == D8.NORTH_AND_WEST || fillDir == D8.NORTH_AND_EAST ? D8.NORTH : D8.SOUTH;
+			case '|' -> fillDir == D8.WEST || fillDir == D8.NORTH_AND_WEST || fillDir == D8.SOUTH_AND_WEST ? D8.WEST : D8.EAST;
 			case '7' -> switch(dir) {
-				case EAST -> fillDir == D8.DOWN_AND_RIGHT || fillDir == D8.DOWN_AND_LEFT || fillDir == D8.DOWN ? D8.DOWN_AND_LEFT : D8.UP_AND_RIGHT;
-				case NORTH -> fillDir == D8.UP_AND_LEFT || fillDir == D8.DOWN_AND_LEFT || fillDir == D8.LEFT ? D8.DOWN_AND_LEFT : D8.UP_AND_RIGHT;
+				case EAST -> fillDir == D8.SOUTH_AND_EAST || fillDir == D8.SOUTH_AND_WEST || fillDir == D8.SOUTH ? D8.SOUTH_AND_WEST : D8.NORTH_AND_EAST;
+				case NORTH -> fillDir == D8.NORTH_AND_WEST || fillDir == D8.SOUTH_AND_WEST || fillDir == D8.WEST ? D8.SOUTH_AND_WEST : D8.NORTH_AND_EAST;
 				default -> throw new IllegalStateException();
 			};
 			case 'L' -> switch(dir) {
-				case WEST -> fillDir == D8.UP_AND_LEFT || fillDir == D8.UP_AND_RIGHT || fillDir == D8.UP ? D8.UP_AND_RIGHT : D8.DOWN_AND_LEFT;
-				case SOUTH -> fillDir == D8.RIGHT || fillDir == D8.UP_AND_RIGHT || fillDir == D8.DOWN_AND_RIGHT ? D8.UP_AND_RIGHT : D8.DOWN_AND_LEFT;
+				case WEST -> fillDir == D8.NORTH_AND_WEST || fillDir == D8.NORTH_AND_EAST || fillDir == D8.NORTH ? D8.NORTH_AND_EAST : D8.SOUTH_AND_WEST;
+				case SOUTH -> fillDir == D8.EAST || fillDir == D8.NORTH_AND_EAST || fillDir == D8.SOUTH_AND_EAST ? D8.NORTH_AND_EAST : D8.SOUTH_AND_WEST;
 				default -> throw new IllegalStateException();
 			};
 			case 'F' -> switch(dir) {
-				case WEST -> fillDir == D8.DOWN_AND_LEFT || fillDir == D8.DOWN_AND_RIGHT || fillDir == D8.DOWN ? D8.DOWN_AND_RIGHT : D8.UP_AND_LEFT;
-				case NORTH -> fillDir == D8.RIGHT || fillDir == D8.DOWN_AND_RIGHT || fillDir == D8.UP_AND_RIGHT ? D8.DOWN_AND_RIGHT : D8.UP_AND_LEFT;
+				case WEST -> fillDir == D8.SOUTH_AND_WEST || fillDir == D8.SOUTH_AND_EAST || fillDir == D8.SOUTH ? D8.SOUTH_AND_EAST : D8.NORTH_AND_WEST;
+				case NORTH -> fillDir == D8.EAST || fillDir == D8.SOUTH_AND_EAST || fillDir == D8.NORTH_AND_EAST ? D8.SOUTH_AND_EAST : D8.NORTH_AND_WEST;
 				default -> throw new IllegalStateException();
 			};
 			case 'J' -> switch(dir) {
-				case EAST -> fillDir == D8.UP_AND_RIGHT || fillDir == D8.UP_AND_LEFT || fillDir == D8.UP ? D8.UP_AND_LEFT : D8.DOWN_AND_RIGHT;
-				case SOUTH -> fillDir == D8.LEFT || fillDir == D8.UP_AND_LEFT || fillDir == D8.DOWN_AND_LEFT ? D8.UP_AND_LEFT : D8.DOWN_AND_RIGHT;
+				case EAST -> fillDir == D8.NORTH_AND_EAST || fillDir == D8.NORTH_AND_WEST || fillDir == D8.NORTH ? D8.NORTH_AND_WEST : D8.SOUTH_AND_EAST;
+				case SOUTH -> fillDir == D8.WEST || fillDir == D8.NORTH_AND_WEST || fillDir == D8.SOUTH_AND_WEST ? D8.NORTH_AND_WEST : D8.SOUTH_AND_EAST;
 				default -> throw new IllegalStateException();
 			};
 			default -> throw new IllegalStateException();
@@ -126,47 +126,17 @@ public class D10b {
 		return new NextFollow(next, newFillDir, newDir);
 	}
 
-	private static void fillNeighboursInside(Grid grid, Point p, D8 dir) {
-			int x = p.x();
-			int y = p.y();
-//			System.out.println(String.format("Painting %s of %s %s", dir, p, grid.get(p).c));
-			switch (dir) {
-			case UP:
-				fillReachable(grid, new Point(x, y - 1));
-				break;
-			case UP_AND_LEFT:
-				fillReachable(grid, new Point(x, y - 1));
-				fillReachable(grid, new Point(x - 1, y));
-				break;
-			case UP_AND_RIGHT:
-				fillReachable(grid, new Point(x, y - 1));
-				fillReachable(grid, new Point(x + 1, y));
-				break;
-			case DOWN:
-				fillReachable(grid, new Point(x, y + 1));
-				break;
-			case DOWN_AND_LEFT:
-				fillReachable(grid, new Point(x, y + 1));
-				fillReachable(grid, new Point(x - 1, y));
-				break;
-			case DOWN_AND_RIGHT:
-				fillReachable(grid, new Point(x, y + 1));
-				fillReachable(grid, new Point(x + 1, y));
-				break;
-			case LEFT:
-				fillReachable(grid, new Point(x - 1, y));
-				break;
-			case RIGHT:
-				fillReachable(grid, new Point(x + 1, y));
-				break;
-		}
+	private static void fillNeighboursInside(final Grid grid, final Point p, final D8 dir) {
+		dir.directions().stream()
+				.map(d -> p.apply(d))
+				.forEach(p2 -> fillReachable(grid, p2));
 	}
 
 	private static int countPoints(Grid grid) {
 		int result = 0;
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
-				if (grid.get(x, y).c() == '.') {
+				if (grid.getCharacter(x, y) == '.') {
 					result++;
 				}
 			}
@@ -176,7 +146,7 @@ public class D10b {
 
 	private static void fillReachable(Grid grid, Point p) {
 		Set<Point> outsidePoints = new HashSet<>();
-		if (p.x() < 0 || p.x() >= grid.width() || p.y() < 0 || p.y() >= grid.height() || grid.get(p.x(), p.y()).c() != '.') {
+		if (p.x() < 0 || p.x() >= grid.width() || p.y() < 0 || p.y() >= grid.height() || grid.getCharacter(p.x(), p.y()) != '.') {
 			return;
 		}
 		outsidePoints.add(p);
@@ -191,16 +161,16 @@ public class D10b {
 			int x = p.x();
 			int y = p.y();
 			grid.update(x, y, 'O');
-			if (x >= 1 && grid.get(x - 1, y).c() == '.') {
+			if (x >= 1 && grid.getCharacter(x - 1, y) == '.') {
 				result.add(new Point(x - 1, y));
 			}
-			if (x < grid.width() - 1 && grid.get(x + 1, y).c() == '.') {
+			if (x < grid.width() - 1 && grid.getCharacter(x + 1, y) == '.') {
 				result.add(new Point(x + 1, y));
 			}
-			if (y >= 1 && grid.get(x, y - 1).c() == '.') {
+			if (y >= 1 && grid.getCharacter(x, y - 1) == '.') {
 				result.add(new Point(x, y - 1));
 			}
-			if (y < grid.height() - 1 && grid.get(x, y + 1).c() == '.') {
+			if (y < grid.height() - 1 && grid.getCharacter(x, y + 1) == '.') {
 				result.add(new Point(x, y + 1));
 			}
 		}
@@ -210,23 +180,32 @@ public class D10b {
 	private static void eraseNotPartOfLoop(Grid grid) {
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
-				Node node = grid.get(x, y);
-				if (node.pathLength() == -1) {
-					node.setChar('.');
+				if (grid.getPathLength(x, y) == -1) {
+					grid.update(x, y, '.');
 				}
 			}
 		}
 	}
-	
+
 	private enum D8 {
-		UP,
-		UP_AND_LEFT,
-		UP_AND_RIGHT,
-		LEFT,
-		RIGHT,
-		DOWN,
-		DOWN_AND_LEFT,
-		DOWN_AND_RIGHT
+		NORTH(Direction.NORTH),
+		NORTH_AND_WEST(Direction.NORTH, Direction.WEST),
+		NORTH_AND_EAST(Direction.NORTH, Direction.EAST),
+		WEST(Direction.WEST),
+		EAST(Direction.EAST),
+		SOUTH(Direction.SOUTH),
+		SOUTH_AND_WEST(Direction.SOUTH, Direction.WEST),
+		SOUTH_AND_EAST(Direction.SOUTH, Direction.EAST);
+		
+		private final List<Direction> directions;
+
+		private D8(final Direction... directions) {
+			this.directions = Arrays.asList(directions);
+		}
+		
+		public final List<Direction> directions() {
+			return directions;
+		}
 	}
 
 }

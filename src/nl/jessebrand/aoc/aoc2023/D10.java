@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import nl.jessebrand.aoc.Direction;
 import nl.jessebrand.aoc.Point;
 
 public class D10 {
@@ -23,7 +24,7 @@ public class D10 {
 		System.out.println(grid);
 
 		final Point start = findStart(grid);
-		grid.setPathLength(start.x(), start.y(), 0);
+		grid.setPathLength(start, 0);
 		System.out.println("Start: " + start);
 
 		findMainLoop(grid, start);
@@ -58,34 +59,36 @@ public class D10 {
 	}
 
 	private static List<Point> findNeighbours(final Grid grid, final Point p) {
-		final int x = p.x();
-		final int y = p.y();
-		final char c = grid.getCharacter(x, y);
-		final int pathLength = grid.getPathLength(x, y);
+		final char c = grid.getCharacter(p);
+		final int pathLength = grid.getPathLength(p);
 		final List<Point> result = new ArrayList<>();
 		// left
-		if (x >= 1 && grid.get(x - 1, y).pathLength() == -1 && LEFT_OPTIONS.contains(grid.get(x - 1, y).c())
+		final Point w = p.apply(Direction.WEST);
+		if (grid.getPathLength(w) == -1 && LEFT_OPTIONS.contains(grid.getCharacter(w))
 				&& RIGHT_OPTIONS.contains(c)) {
-			grid.setPathLength(x - 1, y, pathLength + 1);
-			result.add(new Point(x - 1, y));
+			grid.setPathLength(w, pathLength + 1);
+			result.add(w);
 		}
 		// right
-		if (x < grid.width() - 1 && grid.get(x + 1, y).pathLength() == -1 && RIGHT_OPTIONS.contains(grid.get(x + 1, y).c())
+		final Point e = p.apply(Direction.EAST);
+		if (grid.getPathLength(e) == -1 && RIGHT_OPTIONS.contains(grid.getCharacter(e))
 				&& LEFT_OPTIONS.contains(c)) {
-			grid.setPathLength(x + 1, y, pathLength + 1);
-			result.add(new Point(x + 1, y));
+			grid.setPathLength(e, pathLength + 1);
+			result.add(e);
 		}
 		// up
-		if (y >= 1 && grid.get(x, y - 1).pathLength() == -1 && UP_OPTIONS.contains(grid.get(x, y - 1).c())
+		final Point n = p.apply(Direction.NORTH);
+		if (grid.getPathLength(n) == -1 && UP_OPTIONS.contains(grid.getCharacter(n))
 				&& DOWN_OPTIONS.contains(c)) {
-			grid.setPathLength(x, y - 1, pathLength + 1);
-			result.add(new Point(x, y - 1));
+			grid.setPathLength(n, pathLength + 1);
+			result.add(n);
 		}
 		// down
-		if (y < grid.height() - 1 && grid.get(x, y + 1).pathLength() == -1 && DOWN_OPTIONS.contains(grid.get(x, y + 1).c())
+		final Point s = p.apply(Direction.SOUTH);
+		if (grid.getPathLength(s) == -1 && DOWN_OPTIONS.contains(grid.getCharacter(s))
 				&& UP_OPTIONS.contains(c)) {
-			grid.setPathLength(x, y + 1, pathLength + 1);
-			result.add(new Point(x, y + 1));
+			grid.setPathLength(s, pathLength + 1);
+			result.add(s);
 		}
 		return result;
 	}
@@ -120,8 +123,8 @@ public class D10 {
 			nodes = new Node[height][width];
 		}
 		
-		void setPathLength(final int x, final int y, final int pathLength) {
-			get(x, y).setPathLength(pathLength);			
+		void setPathLength(final Point p, final int pathLength) {
+			get(p).setPathLength(pathLength);			
 		}
 
 		void update(final int x, final int y, final char c) {
@@ -160,7 +163,12 @@ public class D10 {
 		}
 		
 		int getPathLength(final int x, final int y) {
-			return get(x, y).pathLength();
+			final Node n = safeGet(x, y);
+			return n == null ? -1 : n.pathLength();
+		}
+
+		int getPathLength(final Point p) {
+			return getPathLength(p.x(), p.y());
 		}
 		
 		Node get(final Point p) {

@@ -22,7 +22,7 @@ public class D10b {
 		final Grid grid = parseGrid(lines);
 
 		final Point start = findStart(grid);
-		grid.setPathLength(start.x(), start.y(), 0);
+		grid.setPathLength(start, 0);
 		System.out.println("Start: " + start);
 
 		findMainLoop(grid, start);

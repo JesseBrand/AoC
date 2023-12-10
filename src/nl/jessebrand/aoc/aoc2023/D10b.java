@@ -28,11 +28,20 @@ public class D10b {
 		findMainLoop(grid, start);
 
 		eraseNotPartOfLoop(grid);
-		grid.update(start, 'J');
+		replaceStart(grid, start);
 		fillInside(grid);
 		System.out.println(grid);
 		int result = countPoints(grid);
 		System.out.println(result);
+	}
+
+	private static void replaceStart(final Grid grid, final Point start) {
+		final boolean n = grid.getPathLength(start.apply(Direction.NORTH)) == 1;
+		final boolean s = grid.getPathLength(start.apply(Direction.SOUTH)) == 1;
+		final boolean e = grid.getPathLength(start.apply(Direction.EAST)) == 1;
+		final boolean w = grid.getPathLength(start.apply(Direction.WEST)) == 1;
+		final char newChar = n ? w ? 'J' : e ? 'L' : '|' : s ? w ? '7' : 'F' : '-';
+		grid.update(start, newChar);
 	}
 
 	private static void fillInside(final Grid grid) {
@@ -123,6 +132,7 @@ public class D10b {
 	}
 
 	private static void fillNeighboursInside(final Grid grid, final Point p, final D8 dir) {
+//		System.out.println(String.format("%s: Paint %s %c", p, dir, grid.getCharacter(p)));
 		dir.directions().stream()
 				.map(d -> p.apply(d))
 				.forEach(p2 -> fillReachable(grid, p2));

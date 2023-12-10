@@ -202,7 +202,9 @@ public class D10 {
 				case 'F' -> '┌';
 				case 'J' -> '┘';
 				case 'L' -> '└';
-				case'7' -> '┐';
+				case '7' -> '┐';
+				case '.' -> '▓';
+				case 'O' -> '.';
 				default -> c;
 			};
 		}

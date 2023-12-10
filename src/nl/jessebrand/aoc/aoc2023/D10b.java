@@ -26,7 +26,7 @@ public class D10b {
 		System.out.println("Start: " + start);
 
 		findMainLoop(grid, start);
-		
+
 		eraseNotPartOfLoop(grid);
 		grid.update(start, 'J');
 		fillInside(grid);

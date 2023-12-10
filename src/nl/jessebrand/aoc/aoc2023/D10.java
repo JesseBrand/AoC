@@ -188,11 +188,23 @@ public class D10 {
 			StringBuilder sb = new StringBuilder();
 			for (int y = 0; y < nodes.length; y++) {
 				for (int x = 0; x < nodes[y].length; x++) {
-					sb.append(nodes[y][x].c());
+					sb.append(mapChar(nodes[y][x].c()));
 				}
 				sb.append("\n");
 			}
 			return sb.toString();
+		}
+
+		private static char mapChar(char c) {
+			return switch (c) {
+				case '-' -> '─';
+				case '|' -> '│';
+				case 'F' -> '┌';
+				case 'J' -> '┘';
+				case 'L' -> '└';
+				case'7' -> '┐';
+				default -> c;
+			};
 		}
 
 		private final class Node {

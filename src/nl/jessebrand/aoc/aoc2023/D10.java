@@ -24,27 +24,26 @@ public class D10 {
 
 		final Point start = findStart(grid);
 		grid.setPathLength(start.x(), start.y(), 0);
-		System.out.println(start);
-//		System.out.println(grid.toLengthString());
+		System.out.println("Start: " + start);
 
-		List<Point> next = findNeighbours(grid, start, grid.get(start.x(), start.y()));
-//		System.out.println("next1 = " + next);
-		while (!next.isEmpty()) {
-			next = findNeighbours(grid, next);
-//			System.out.println(grid.toLengthString());
-//			System.out.println("next2 = " + next);
-		}
-//		System.out.println(grid.toLengthString());
+		findMainLoop(grid, start);
 		
-		int highest = findHighest(grid);
+		final int highest = findHighest(grid);
 		System.out.println(highest);
 	}
 	
+	static void findMainLoop(final Grid grid, final Point start) {
+		List<Point> next = findNeighbours(grid, start, grid.get(start.x(), start.y()));
+		while (!next.isEmpty()) {
+			next = findNeighbours(grid, next);
+		}
+	}
+
 	private static int findHighest(Grid grid) {
 		int highest = 0;
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
-				highest = Math.max(highest, grid.get(x, y).pathLength);
+				highest = Math.max(highest, grid.get(x, y).pathLength());
 			}
 		}
 		return highest;
@@ -62,51 +61,50 @@ public class D10 {
 	private static List<Point> findNeighbours(Grid grid, Point p, Node node) {
 		int x = p.x();
 		int y = p.y();
-		int pathLength = node.pathLength;
+		int pathLength = node.pathLength();
 		final List<Point> result = new ArrayList<>();
 		// left
-		if (x >= 1 && grid.get(x - 1, y).pathLength == -1 && LEFT_OPTIONS.contains(grid.get(x - 1, y).c)
-				&& (node.c == 'S' || RIGHT_OPTIONS.contains(node.c))) {
+		if (x >= 1 && grid.get(x - 1, y).pathLength() == -1 && LEFT_OPTIONS.contains(grid.get(x - 1, y).c())
+				&& (node.c() == 'S' || RIGHT_OPTIONS.contains(node.c()))) {
 			grid.setPathLength(x - 1, y, pathLength + 1);
 			result.add(new Point(x - 1, y));
 		}
 		// right
-		if (x < grid.width() - 1 && grid.get(x + 1, y).pathLength == -1 && RIGHT_OPTIONS.contains(grid.get(x + 1, y).c)
-				&& (node.c == 'S' || LEFT_OPTIONS.contains(node.c))) {
+		if (x < grid.width() - 1 && grid.get(x + 1, y).pathLength() == -1 && RIGHT_OPTIONS.contains(grid.get(x + 1, y).c())
+				&& (node.c() == 'S' || LEFT_OPTIONS.contains(node.c()))) {
 			grid.setPathLength(x + 1, y, pathLength + 1);
 			result.add(new Point(x + 1, y));
 		}
 		// up
-		if (y >= 1 && grid.get(x, y - 1).pathLength == -1 && UP_OPTIONS.contains(grid.get(x, y - 1).c)
-				&& (node.c == 'S' || DOWN_OPTIONS.contains(node.c))) {
+		if (y >= 1 && grid.get(x, y - 1).pathLength() == -1 && UP_OPTIONS.contains(grid.get(x, y - 1).c())
+				&& (node.c() == 'S' || DOWN_OPTIONS.contains(node.c()))) {
 			grid.setPathLength(x, y - 1, pathLength + 1);
 			result.add(new Point(x, y - 1));
 		}
 		// down
-		if (y < grid.height() - 1 && grid.get(x, y + 1).pathLength == -1 && DOWN_OPTIONS.contains(grid.get(x, y + 1).c)
-				&& (node.c == 'S' || UP_OPTIONS.contains(node.c))) {
+		if (y < grid.height() - 1 && grid.get(x, y + 1).pathLength() == -1 && DOWN_OPTIONS.contains(grid.get(x, y + 1).c())
+				&& (node.c() == 'S' || UP_OPTIONS.contains(node.c()))) {
 			grid.setPathLength(x, y + 1, pathLength + 1);
 			result.add(new Point(x, y + 1));
 		}
 		return result;
 	}
 
-	private static Grid parseGrid(List<String> lines) {
+	static Grid parseGrid(List<String> lines) {
 		final Grid grid = new Grid(lines.get(0).length(), lines.size());
 		System.out.println("Grid size = (WxH) " + lines.get(0).length() + "x" + lines.size());
 		for (int y = 0; y < lines.size(); y++) {
 			for (int x = 0; x < lines.get(y).length(); x++) {
-				System.out.println(x + ", " + y);
 				grid.set(x, y, lines.get(y).charAt(x));
 			}
 		}
 		return grid;
 	}
 
-	private static Point findStart(Grid grid) {
+	static Point findStart(Grid grid) {
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
-				if (grid.get(x, y).c == 'S') {
+				if (grid.get(x, y).c() == 'S') {
 					return new Point(x, y);
 				}
 			}
@@ -114,7 +112,7 @@ public class D10 {
 		throw new IllegalStateException();
 	}
 
-	private static class Grid {
+	static class Grid {
 		
 		private final Node[][] nodes;
 		
@@ -126,12 +124,23 @@ public class D10 {
 			get(x, y).setPathLength(pathLength);			
 		}
 
+		void update(int x, int y, char c) {
+			nodes[y][x].setChar(c);
+		}
+		
 		void set(int x, int y, char c) {
+			if (nodes[y][x] != null) {
+				throw new IllegalStateException();
+			}
 			nodes[y][x] = new Node(c);
 		}
 		
 		Node get(int x, int y) {
 			return nodes[y][x];
+		}
+		
+		Node get(Point p) {
+			return get(p.x(), p.y());
 		}
 		
 		int height() {
@@ -147,7 +156,7 @@ public class D10 {
 			StringBuilder sb = new StringBuilder();
 			for (int y = 0; y < nodes.length; y++) {
 				for (int x = 0; x < nodes[y].length; x++) {
-					sb.append(nodes[y][x].c);
+					sb.append(nodes[y][x].c());
 				}
 				sb.append("\n");
 			}
@@ -155,16 +164,28 @@ public class D10 {
 		}
 	}
 	
-	private static class Node {
-		final char c;
-		int pathLength = -1;
+	static class Node {
+		private char c;
+		private int pathLength = -1;
 		
 		Node(char c) {
 			this.c = c;
 		}
 		
-		void setPathLength(int length) {
+		void setPathLength(final int length) {
 			this.pathLength = length;
+		}
+		
+		void setChar(final char c) {
+			this.c = c;
+		}
+		
+		char c() {
+			return c;
+		}
+		
+		int pathLength() {
+			return pathLength;
 		}
 		
 		@Override

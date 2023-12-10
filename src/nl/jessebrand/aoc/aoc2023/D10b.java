@@ -35,13 +35,13 @@ public class D10b {
 		System.out.println(result);
 	}
 
-	private static void fillInside(Grid grid) {
+	private static void fillInside(final Grid grid) {
 		// determine start
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
 				final char c = grid.getCharacter(x, y);
 				if (c != 'O' && c != '.') {
-					Point start = new Point(x, y);
+					final Point start = new Point(x, y);
 					NextFollow follow;
 					if (c == 'F') {
 						follow = new NextFollow(start, D8.NORTH_AND_WEST, Direction.EAST);
@@ -64,7 +64,9 @@ public class D10b {
 		final Point p = follow.p();
 		final D8 fillDir = follow.fillDir();
 		final Direction dir = follow.dir();
+
 		fillNeighboursInside(grid, p, fillDir);
+
 		final Point next = p.apply(dir);
 		final Direction newDir = switch (dir) {
 			case NORTH -> switch (grid.getCharacter(next)) {
@@ -126,7 +128,7 @@ public class D10b {
 				.forEach(p2 -> fillReachable(grid, p2));
 	}
 
-	private static int countPoints(Grid grid) {
+	private static int countPoints(final Grid grid) {
 		int result = 0;
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
@@ -150,7 +152,7 @@ public class D10b {
 	}
 
 	private static Set<Point> findOutsideNeighbours(final Grid grid, final Set<Point> outsidePoints) {
-		Set<Point> result = new HashSet<>();
+		final Set<Point> result = new HashSet<>();
 		for (Point p : outsidePoints) {
 			grid.update(p, 'O');
 			for (final Direction dir : Direction.values()) {
@@ -163,7 +165,7 @@ public class D10b {
 		return result;
 	}
 
-	private static void eraseNotPartOfLoop(Grid grid) {
+	private static void eraseNotPartOfLoop(final Grid grid) {
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
 				if (grid.getPathLength(x, y) == -1) {

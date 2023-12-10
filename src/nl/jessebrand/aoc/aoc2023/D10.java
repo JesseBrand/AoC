@@ -39,25 +39,25 @@ public class D10 {
 		}
 	}
 
-	private static int findHighest(Grid grid) {
+	private static int findHighest(final Grid grid) {
 		int highest = 0;
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
-				highest = Math.max(highest, grid.get(x, y).pathLength());
+				highest = Math.max(highest, grid.getPathLength(x, y));
 			}
 		}
 		return highest;
 	}
 
-	private static List<Point> findNeighbours(Grid grid, List<Point> next) {
+	private static List<Point> findNeighbours(final Grid grid, final List<Point> points) {
 		final List<Point> result = new ArrayList<>();
-		for (Point point : next) {
+		for (final Point point : points) {
 			result.addAll(findNeighbours(grid, point));
 		}
 		return result;
 	}
 
-	private static List<Point> findNeighbours(Grid grid, Point p) {
+	private static List<Point> findNeighbours(final Grid grid, final Point p) {
 		final int x = p.x();
 		final int y = p.y();
 		final char c = grid.getCharacter(x, y);
@@ -90,7 +90,7 @@ public class D10 {
 		return result;
 	}
 
-	static Grid parseGrid(List<String> lines) {
+	static Grid parseGrid(final List<String> lines) {
 		final Grid grid = new Grid(lines.get(0).length(), lines.size());
 		System.out.println("Grid size = (WxH) " + lines.get(0).length() + "x" + lines.size());
 		for (int y = 0; y < lines.size(); y++) {
@@ -101,7 +101,7 @@ public class D10 {
 		return grid;
 	}
 
-	static Point findStart(Grid grid) {
+	static Point findStart(final Grid grid) {
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
 				if (grid.get(x, y).c() == 'S') {
@@ -112,7 +112,7 @@ public class D10 {
 		throw new IllegalStateException();
 	}
 
-	static class Grid {
+	static final class Grid {
 		
 		private final Node[][] nodes;
 		
@@ -132,14 +132,14 @@ public class D10 {
 			update(p.x(), p.y(), c);
 		}
 		
-		void set(int x, int y, char c) {
+		void set(final int x, final int y, final char c) {
 			if (nodes[y][x] != null) {
 				throw new IllegalStateException();
 			}
 			nodes[y][x] = new Node(c);
 		}
 		
-		private Node get(int x, int y) {
+		private Node get(final int x, final int y) {
 			return nodes[y][x];
 		}
 		
@@ -163,7 +163,7 @@ public class D10 {
 			return get(x, y).pathLength();
 		}
 		
-		Node get(Point p) {
+		Node get(final Point p) {
 			return get(p.x(), p.y());
 		}
 		
@@ -187,7 +187,7 @@ public class D10 {
 			return sb.toString();
 		}
 
-		private class Node {
+		private final class Node {
 			private char c;
 			private int pathLength = -1;
 			

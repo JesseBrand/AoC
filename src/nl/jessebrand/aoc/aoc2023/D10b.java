@@ -31,7 +31,7 @@ public class D10b {
 		replaceStart(grid, start);
 		fillInside(grid);
 		System.out.println(grid);
-		int result = countPoints(grid);
+		int result = countCharacters(grid, 'I');
 		System.out.println(result);
 	}
 
@@ -49,11 +49,11 @@ public class D10b {
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
 				final char c = grid.getCharacter(x, y);
-				if (c != 'O' && c != '.') {
+				if (c != 'I' && c != '.') {
 					final Point start = new Point(x, y);
 					NextFollow follow;
 					if (c == 'F') {
-						follow = new NextFollow(start, D8.NORTH_AND_WEST, Direction.EAST);
+						follow = new NextFollow(start, D8.SOUTH_AND_EAST, Direction.EAST);
 					} else {
 						throw new IllegalStateException(String.format("Expected F but found %c at %d,%d", c, x, y));
 					}
@@ -74,7 +74,7 @@ public class D10b {
 		final D8 fillDir = follow.fillDir();
 		final Direction dir = follow.dir();
 
-		fillNeighboursInside(grid, p, fillDir);
+		fillNeighboursInside(grid, p, fillDir, 'I');
 
 		final Point next = p.apply(dir);
 		final Direction newDir = switch (dir) {
@@ -131,18 +131,18 @@ public class D10b {
 		return new NextFollow(next, newFillDir, newDir);
 	}
 
-	private static void fillNeighboursInside(final Grid grid, final Point p, final D8 dir) {
+	private static void fillNeighboursInside(final Grid grid, final Point p, final D8 dir, final char fillWith) {
 //		System.out.println(String.format("%s: Paint %s %c", p, dir, grid.getCharacter(p)));
 		dir.directions().stream()
 				.map(d -> p.apply(d))
-				.forEach(p2 -> fillReachable(grid, p2));
+				.forEach(p2 -> fillReachable(grid, p2, fillWith));
 	}
 
-	private static int countPoints(final Grid grid) {
+	private static int countCharacters(final Grid grid, final char toCount) {
 		int result = 0;
 		for (int y = 0; y < grid.height(); y++) {
 			for (int x = 0; x < grid.width(); x++) {
-				if (grid.getCharacter(x, y) == '.') {
+				if (grid.getCharacter(x, y) == toCount) {
 					result++;
 				}
 			}
@@ -150,21 +150,21 @@ public class D10b {
 		return result;
 	}
 
-	private static void fillReachable(final Grid grid, final Point p) {
+	private static void fillReachable(final Grid grid, final Point p, final char fillWith) {
 		Set<Point> outsidePoints = new HashSet<>();
 		if (grid.getCharacter(p.x(), p.y()) != '.') {
 			return;
 		}
 		outsidePoints.add(p);
 		while (!outsidePoints.isEmpty()) {
-			outsidePoints = findOutsideNeighbours(grid, outsidePoints);
+			outsidePoints = findReachableNeighbours(grid, outsidePoints, fillWith);
 		}
 	}
 
-	private static Set<Point> findOutsideNeighbours(final Grid grid, final Set<Point> outsidePoints) {
+	private static Set<Point> findReachableNeighbours(final Grid grid, final Set<Point> outsidePoints, final char fillWith) {
 		final Set<Point> result = new HashSet<>();
 		for (Point p : outsidePoints) {
-			grid.update(p, 'O');
+			grid.update(p, fillWith);
 			for (final Direction dir : Direction.values()) {
 				final Point newP = p.apply(dir);
 				if (grid.getCharacter(newP) == '.') {

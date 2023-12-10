@@ -203,8 +203,7 @@ public class D10 {
 				case 'J' -> '┘';
 				case 'L' -> '└';
 				case '7' -> '┐';
-				case '.' -> '▓';
-				case 'O' -> '.';
+				case 'I' -> '▓';
 				default -> c;
 			};
 		}

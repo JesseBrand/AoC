@@ -1,7 +1,5 @@
 package nl.jessebrand.aoc;
 
-import static nl.jessebrand.aoc.Utils.findMax;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -350,6 +348,34 @@ public class Utils {
 
 	public static <T> List<T> parseLines(final List<String> lines, final Function<String, T> function) {
 		return lines.stream().map(function).collect(Collectors.toList());
+	}
+
+	public static int allManhDistances(final List<Point> points) {
+		int total = 0;
+		for (int i = 0; i < points.size(); i++) {
+			final Point p1 = points.get(i);
+			for (int j = i + 1; j < points.size(); j++) {
+				final Point p2 = points.get(j);
+				final int distance = manhDistance(p1, p2);
+//				System.out.println(String.format("Shortest from [%d] %d,%d to [%d] %d,%d = %d", points.indexOf(p1) + 1, p1.x(), p1.y(), points.indexOf(p2) + 1, p2.x(), p2.y(), distance));
+				total += distance;
+			}
+		}
+		return total;
+	}
+
+	public static long allManhDistancesL(final List<LPoint> points) {
+		long total = 0;
+		for (int i = 0; i < points.size(); i++) {
+			final LPoint p1 = points.get(i);
+			for (int j = i + 1; j < points.size(); j++) {
+				final LPoint p2 = points.get(j);
+				final long distance = manhDistance(p1, p2);
+//				System.out.println(String.format("Shortest from [%d] %d,%d to [%d] %d,%d = %d", points.indexOf(p1) + 1, p1.x(), p1.y(), points.indexOf(p2) + 1, p2.x(), p2.y(), distance));
+				total += distance;
+			}
+		}
+		return total;
 	}
 
 }

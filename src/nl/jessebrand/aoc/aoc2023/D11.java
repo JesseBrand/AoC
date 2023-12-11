@@ -1,6 +1,6 @@
 package nl.jessebrand.aoc.aoc2023;
 
-import static nl.jessebrand.aoc.Utils.manhDistance;
+import static nl.jessebrand.aoc.Utils.*;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
@@ -21,20 +21,9 @@ public class D11 {
 	}
 
 	private static long getDistanceBetweenPoints(final Grid grid, final long spaceSize) {
-		long total = 0;
-		final List<LPoint> points = grid.getPoints(spaceSize);
-		for (int i = 0; i < points.size(); i++) {
-			final LPoint p1 = points.get(i);
-			for (int j = i + 1; j < points.size(); j++) {
-				final LPoint p2 = points.get(j);
-				final long distance = manhDistance(p1, p2);
-//				System.out.println(String.format("Shortest from [%d] %d,%d to [%d] %d,%d = %d", points.indexOf(p1) + 1, p1.x(), p1.y(), points.indexOf(p2) + 1, p2.x(), p2.y(), distance));
-				total += distance;
-			}
-		}
-		return total;
+		return allManhDistancesL(grid.getPoints(spaceSize));
 	}
-	
+
 	private static Grid parseGrid(final List<String> lines) {
 		final Grid grid = new Grid();
 		int y = 0;
@@ -53,8 +42,8 @@ public class D11 {
 			y++;
 		}
 		for (int x = 0; x < grid.getWidth(); x++) {
-			if (allXEmpty(grid, x)) {
-				System.out.println("all x empty at " + x);
+			if (isColumnEmpty(grid, x)) {
+				System.out.println("column empty at x " + x);
 				grid.addColumn(x);
 			}
 		}
@@ -62,7 +51,7 @@ public class D11 {
 	}
 
 
-	private static boolean allXEmpty(final Grid grid, final int x) {
+	private static boolean isColumnEmpty(final Grid grid, final int x) {
 		boolean found = false;
 		for (final List<Integer> row : grid.rows()) {
 			if (row.contains(x)) {

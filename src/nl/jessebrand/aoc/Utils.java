@@ -155,6 +155,18 @@ public class Utils {
 	public static int manhDistance(int x1, int y1, int x2, int y2) {
 		return Math.max(x1, x2) - Math.min(x1, x2) + Math.max(y1, y2) - Math.min(y1, y2);
 	}
+
+	public static long manhDistance(LPoint point1, LPoint point2) {
+		return manhDistance(point1.x(), point1.y(), point2.x(), point2.y());
+	}
+
+	public static long manhDistance(LPoint point1, long x2, long y2) {
+		return manhDistance(point1.x(), point1.y(), x2, y2);
+	}
+
+	public static long manhDistance(long x1, long y1, long x2, long y2) {
+		return Math.max(x1, x2) - Math.min(x1, x2) + Math.max(y1, y2) - Math.min(y1, y2);
+	}
 	
 	public static int countTotal(int[] values) {
 		return Arrays.stream(values).reduce((a, b) -> a + b).getAsInt();

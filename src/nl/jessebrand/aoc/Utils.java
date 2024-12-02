@@ -350,6 +350,21 @@ public class Utils {
 		return lines.stream().map(function).collect(Collectors.toList());
 	}
 
+	public static List<List<Integer>> parseColumnsAsInts(final List<String> lines) {
+		final List<List<Integer>> lineArr = parseLines(lines, Utils::parseIntsFromString);
+		final int length = lineArr.get(0).size();
+		final List<List<Integer>> result = new ArrayList<>(length);
+		for (int i = 0; i < length; i++) {
+			result.add(new ArrayList<>());
+		}
+		for (List<Integer> line : lineArr) {
+			for (int i = 0; i < length; i++) {
+				result.get(i).add(line.get(i));
+			}
+		}
+		return result;		
+	}
+
 	public static int allManhDistances(final List<Point> points) {
 		int total = 0;
 		for (int i = 0; i < points.size(); i++) {

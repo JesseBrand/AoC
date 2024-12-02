@@ -393,4 +393,12 @@ public class Utils {
 		return total;
 	}
 
+	public static <T> long countOccurances(final List<Integer> list, final int i) {
+		return list.stream().filter(t -> t == i).count();
+	}
+
+	public static <T> long countOccurances(final List<T> list, final T o) {
+		return list.stream().filter(t -> t.equals(o)).count();
+	}
+
 }

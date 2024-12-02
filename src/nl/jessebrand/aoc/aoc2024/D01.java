@@ -1,6 +1,8 @@
 package nl.jessebrand.aoc.aoc2024;
 
-import static nl.jessebrand.aoc.Utils.*;
+import static nl.jessebrand.aoc.Utils.countOccurances;
+import static nl.jessebrand.aoc.Utils.parseColumnsAsInts;
+import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +16,7 @@ public class D01 {
 			list.sort(null);
 		}
 		System.out.println(cols);
+
 		final int size = cols.get(0).size();
 		final List<Integer> list1 = cols.get(0);
 		final List<Integer> list2 = cols.get(1);
@@ -29,15 +32,5 @@ public class D01 {
 			total2 += i * countOccurances(list2, i);
 		}
 		System.out.println(total2);
-	}
-
-	private static <T> int countOccurances(List<T> list1, T i) {
-		int total = 0;
-		for (T t: list1) {
-			if (t.equals(i)) {
-				total++;
-			}
-		}
-		return total;
 	}
 }

@@ -14,7 +14,7 @@ public class D02 {
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2024/d02");
 		final List<List<Integer>> reports = parseLines(lines, Utils::parseIntsFromString);
-		System.out.println(reports);
+//		System.out.println(reports);
 		
 		System.out.println(reports.stream().filter(D02::isSafe1).count());
 		System.out.println(reports.stream().filter(D02::isSafe2).count());
@@ -28,7 +28,7 @@ public class D02 {
 		return check(report, 1, 3) || check(report, -3, -1);
 	}
 
-	private static boolean simpleCheck(List<Integer> report, int minInc, int maxInc) {
+	private static boolean simpleCheck(final List<Integer> report, final int minInc, final int maxInc) {
 		for (int i = 1; i < report.size(); i++) {
 			if (!isWithinDiff(report, i - 1, i, minInc, maxInc)) {
 				return false;
@@ -37,25 +37,25 @@ public class D02 {
 		return true;
 	}
 
-	private static boolean check(List<Integer> report, int minInc, int maxInc) {
+	private static boolean check(final List<Integer> report, final int minInc, final int maxInc) {
 		if (simpleCheck(report, minInc, maxInc)) {
 			return true;
 		}
-		System.out.println(report + " wrong");
+		System.out.println(report + " unsafe");
 		for (int i = 0; i < report.size(); i++) {
 			final List<Integer> subList = new ArrayList<>(report);
 			subList.remove(i);
 			System.out.print(" trying " + subList + "... ");
 			if (simpleCheck(subList, minInc, maxInc)) {
-				System.out.println("NOW CORRECT");
+				System.out.println("NOW SAFE");
 				return true;
 			}
-			System.out.println("wrong");
+			System.out.println("unsafe");
 		}
 		return false;
 	}
 
-	private static boolean isWithinDiff(List<Integer> report, int iLeft, int iRight, int minInc, int maxInc) {
+	private static boolean isWithinDiff(final List<Integer> report, final int iLeft, final int iRight, final int minInc, final int maxInc) {
 		final int change = report.get(iRight) - report.get(iLeft);
 		return change >= minInc && change <= maxInc;
 	}

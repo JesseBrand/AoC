@@ -22,7 +22,6 @@ public class D04 {
 
 		private final int xInc;
 		private final int yInc;
-		private Direction rotDir;
 
 		Direction(int xInc, int yInc) {
 			this.xInc = xInc;
@@ -36,73 +35,45 @@ public class D04 {
 		public int yInc() {
 			return yInc;
 		}
-
-		public Direction rotDir() {
-			return rotDir;
-		}
 	};
-
-	static {
-		Direction.NW.rotDir = Direction.NE;
-		Direction.N.rotDir  = Direction.E;
-		Direction.NE.rotDir = Direction.SE;
-		Direction.E.rotDir  = Direction.S;
-		Direction.SE.rotDir = Direction.SW;
-		Direction.S.rotDir  = Direction.W;
-		Direction.SW.rotDir = Direction.NW;
-		Direction.W.rotDir  = Direction.N;
-	}
 
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2024/d04");
 
 		final List<Point> as = findAs(lines);
-//		System.out.println(as);
 		int matches1 = 0;
 		int matches2 = 0;
 		for (final Point a : as) {
-			matches1 += findXMas(lines, a);
-			matches2 += findMas(lines, a);
+			matches1 += findXMAS(lines, a);
+			matches2 += findCrossedMass(lines, a) ? 1 : 0;
 		}
 		System.out.println(matches1);
 		System.out.println(matches2);
 	}
 
-	private static int findXMas(final List<String> lines, final Point p) {
+	private static int findXMAS(final List<String> lines, final Point p) {
 		int total = 0;
 		for (final Direction dir : Direction.values()) {
-			if (matchesXMAS(lines, p, dir.xInc(), dir.yInc())) {
+			if (matchesXMAS(lines, p, dir)) {
 				total++;
 			}
-		}
-//		if (total > 0) {
-//			System.out.println(total + " matches at " + p);
-//		}
-		return total;
-	}
-
-	private static int findMas(final List<String> lines, final Point p) {
-		int total = 0;
-		for (final Direction dir : Direction.values()) {
-			if (matchesMAS(lines, p, dir.xInc(), dir.yInc())
-					&& matchesMAS(lines, p, dir.rotDir().xInc(), dir.rotDir().yInc())) {
-				total++;
-			}
-		}
-		if (total > 0) {
-			System.out.println(total + " matches at " + p);
 		}
 		return total;
 	}
 
-	private static boolean matchesXMAS(List<String> lines, Point p, int xInc, int yInc) {
-		return matches(lines, p, -2 * xInc, -2 * yInc, 'X')
-				&& matchesMAS(lines, p, xInc, yInc);
+	private static boolean findCrossedMass(final List<String> lines, final Point p) {
+		return (matchesMAS(lines, p, Direction.NW) || matchesMAS(lines, p, Direction.SE))
+				&& (matchesMAS(lines, p, Direction.NE) || matchesMAS(lines, p, Direction.SW));
 	}
 
-	private static boolean matchesMAS(List<String> lines, Point p, int xInc, int yInc) {
-		return matches(lines, p, -xInc, -yInc, 'M')
-				&& matches(lines, p, xInc, yInc, 'S');
+	private static boolean matchesXMAS(List<String> lines, Point p, Direction dir) {
+		return matches(lines, p, -2 * dir.xInc(), -2 * dir.yInc(), 'X')
+				&& matchesMAS(lines, p, dir);
+	}
+
+	private static boolean matchesMAS(List<String> lines, Point p, final Direction dir) {
+		return matches(lines, p, -dir.xInc(), -dir.yInc(), 'M')
+				&& matches(lines, p, dir.xInc(), dir.yInc(), 'S');
 	}
 
 	private static boolean matches(List<String> lines, Point p, int xInc, int yInc, char c) {
@@ -134,5 +105,4 @@ public class D04 {
 	}
 }
 
-// 1025 too low
-// 2001 too high
+// 1974

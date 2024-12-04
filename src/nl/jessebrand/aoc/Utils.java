@@ -401,4 +401,37 @@ public class Utils {
 		return list.stream().filter(t -> t.equals(o)).count();
 	}
 
+	public static Grid<Character> buildCharGrid(final List<String> lines) {
+		final Grid<Character> grid = new Grid<>(lines.get(0).length(), lines.size(), "");
+		for (int y = 0; y < lines.size(); y++) {
+			String line = lines.get(y);
+			for (int x = 0; x < line.length(); x++) {
+				grid.set(x, y, line.charAt(x));
+			}
+		}
+		return grid;
+	}
+
+	public static Grid<Integer> buildIntGrid(final List<String> lines) {
+		final Grid<Integer> grid = new Grid<>(lines.get(0).length(), lines.size(), "");
+		for (int y = 0; y < lines.size(); y++) {
+			String line = lines.get(y);
+			for (int x = 0; x < line.length(); x++) {
+				grid.set(x, y, Integer.parseInt(line.substring(x, x + 1)));
+			}
+		}
+		return grid;
+	}
+
+	public static <T> List<Point> findGridPoints(final Grid<T> grid, final T o) {
+		final List<Point> result = new ArrayList<>();
+		for (int x = 0; x < grid.getWidth(); x++) {
+			for (int y = 0; y < grid.getHeight(); y++) {
+				if (grid.get(x, y) == o) {
+					result.add(new Point(x, y));
+				}
+			}
+		}
+		return result;
+	}
 }

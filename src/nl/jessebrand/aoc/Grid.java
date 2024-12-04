@@ -26,12 +26,29 @@ public class Grid<T> {
 		return get(loc.x(), loc.y());
 	}
 	
-	public T get(int x, int y) {
+	public T get(final int x, final int y) {
 		if (x < 0 || x >= getWidth()) {
 			throw new IllegalStateException(String.format("x out of bounds: %d (%d - %d)", x, 0, getWidth()));
 		}
 		if (y < 0 || y >= getHeight()) {
 			throw new IllegalStateException(String.format("y out of bounds: %d (%d - %d)", y, 0, getHeight()));
+		}
+		return (T) values[y][x];
+	}
+
+	/**
+	 * Does not work for primitives.
+	 */
+	public T getOrNull(final int x, final int y) {
+		return getOr(x, y, null);
+	}
+	
+	public T getOr(final int x, final int y, final T def) {
+		if (x < 0 || x >= getWidth()) {
+			return def;
+		}
+		if (y < 0 || y >= getHeight()) {
+			return def;
 		}
 		return (T) values[y][x];
 	}

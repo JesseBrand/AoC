@@ -1,12 +1,13 @@
 package nl.jessebrand.aoc.aoc2024;
 
-import nl.jessebrand.aoc.Point;
+import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static nl.jessebrand.aoc.Utils.readFile;
+import nl.jessebrand.aoc.Point;
 
 public class D04 {
 
@@ -40,43 +41,35 @@ public class D04 {
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2024/d04");
 
-		final List<Point> as = findAs(lines);
-		int matches1 = 0;
-		int matches2 = 0;
-		for (final Point a : as) {
-			matches1 += findXMAS(lines, a);
-			matches2 += findCrossedMass(lines, a) ? 1 : 0;
-		}
-		System.out.println(matches1);
-		System.out.println(matches2);
+		final long result1 = findChars(lines, 'X').stream().mapToLong(p -> find(lines, p, "XMAS", 0)).sum();
+		System.out.println(result1);
+
+		final long result2 = findChars(lines, 'A').stream().filter(p -> findCrossed(lines, p, "MAS", 1)).count();
+		System.out.println(result2);
 	}
 
-	private static int findXMAS(final List<String> lines, final Point p) {
-		int total = 0;
-		for (final Direction dir : Direction.values()) {
-			if (matchesXMAS(lines, p, dir)) {
-				total++;
+	private static long find(final List<String> lines, final Point p, final String str, final int initPos) {
+		return Arrays.stream(Direction.values()).filter(dir -> matches(lines, p, dir, str, initPos)).count();
+	}
+
+	private static boolean findCrossed(final List<String> lines, final Point p, final String str, final int initPos) {
+		return (matches(lines, p, Direction.NW, str, initPos) || matches(lines, p, Direction.SE, str, initPos))
+				&& (matches(lines, p, Direction.NE, str, initPos) || matches(lines, p, Direction.SW, str, initPos));
+	}
+
+	private static boolean matches(final List<String> lines, final Point p, final Direction dir, final String str, final int initPos) {
+		for (int i = 0; i < str.length(); i++) {
+			if (i == initPos) {
+				continue;
+			}
+			if (!matches(lines, p, (i - initPos) * dir.xInc(), (i - initPos) * dir.yInc(), str.charAt(i))) {
+				return false;
 			}
 		}
-		return total;
+		return true;
 	}
 
-	private static boolean findCrossedMass(final List<String> lines, final Point p) {
-		return (matchesMAS(lines, p, Direction.NW) || matchesMAS(lines, p, Direction.SE))
-				&& (matchesMAS(lines, p, Direction.NE) || matchesMAS(lines, p, Direction.SW));
-	}
-
-	private static boolean matchesXMAS(List<String> lines, Point p, Direction dir) {
-		return matches(lines, p, -2 * dir.xInc(), -2 * dir.yInc(), 'X')
-				&& matchesMAS(lines, p, dir);
-	}
-
-	private static boolean matchesMAS(List<String> lines, Point p, final Direction dir) {
-		return matches(lines, p, -dir.xInc(), -dir.yInc(), 'M')
-				&& matches(lines, p, dir.xInc(), dir.yInc(), 'S');
-	}
-
-	private static boolean matches(List<String> lines, Point p, int xInc, int yInc, char c) {
+	private static boolean matches(final List<String> lines, final Point p, final int xInc, final int yInc, final char c) {
 		return get(lines, p.x() + xInc, p.y() + yInc) == c;
 	}
 
@@ -91,12 +84,12 @@ public class D04 {
 		return line.charAt(x);
 	}
 
-	private static List<Point> findAs(final List<String> lines) {
+	private static List<Point> findChars(final List<String> lines, final char c) {
 		final List<Point> points = new ArrayList<>();
 		for (int y = 0; y < lines.size(); y++) {
 			final String line = lines.get(y);
 			for (int x = 0; x < line.length(); x++) {
-				if (line.charAt(x) == 'A') {
+				if (line.charAt(x) == c) {
 					points.add(new Point(x, y));
 				}
 			}
@@ -105,4 +98,5 @@ public class D04 {
 	}
 }
 
+// 2642
 // 1974

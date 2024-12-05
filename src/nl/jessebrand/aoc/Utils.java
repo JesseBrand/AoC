@@ -44,25 +44,37 @@ public class Utils {
         return sb.toString();
     }
     
-    public static Point parsePoint(String s) {
-    	String[] split = s.split(",");
+    public static Point parsePoint(final String s) {
+    	return parsePoint(s, ",");
+    }
+
+    public static Point parsePoint(final String s, final String separator) {
+    	String[] split = s.split("" + separator);
     	if (split.length != 2) {
     		throw new IllegalStateException("Not a point: " + s);
     	}
-    	return parsePoint(split[0], split[1]);
+    	return toPoint(split[0], split[1]);
     }
 
-    public static Point parsePoint(String x, String y) {
+    public static Point toPoint(String x, String y) {
     	return new Point(Integer.parseInt(x), Integer.parseInt(y));
     }
     
-    public static Point[] parsePoints(String[] ss) {
+    public static Point[] parsePoints(final String[] ss) {
+    	return parsePoints(ss, ',');
+    }
+
+	public static Point[] parsePoints(final String[] ss, final char separator) {
 		Point[] points = new Point[ss.length];
 		for (int i = 0; i < ss.length; i++) {
 			points[i] = parsePoint(ss[i]);
 		}
 		return points;
     }
+	
+	public static List<Point> parsePoints(final List<String> ss, final String separator) {
+		return ss.stream().map(s -> parsePoint(s, separator)).toList();
+	}
   
     public static Point3 parsePoint3(String s) {
     	String[] split = s.split(",");
@@ -297,11 +309,23 @@ public class Utils {
 	}
 
 	public static List<Integer> parseIntsFromString(final String string) {
+		return parseIntsFromString(string, "\s+");
+	}
+
+	public static List<Integer> parseIntsFromString(final String string, final String separator) {
 		final List<Integer> result = new ArrayList<>();
-		for (String s : string.trim().split("\s+")) {
+		for (String s : string.trim().split(separator)) {
 			result.add(Integer.parseInt(s.trim()));
 		}
 		return result;
+	}
+
+	public static List<List<Integer>> parseIntsFromStrings(final List<String> strings) {
+		return parseIntsFromStrings(strings, ",");
+	}
+
+	public static List<List<Integer>> parseIntsFromStrings(final List<String> strings, final String separator) {
+		return strings.stream().map(l -> parseIntsFromString(l, separator)).toList();
 	}
 
 	public static List<Long> parseLongsFromString(final String string) {

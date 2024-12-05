@@ -1,7 +1,7 @@
 package nl.jessebrand.aoc.aoc2022;
 
 import static nl.jessebrand.aoc.Utils.manhDistance;
-import static nl.jessebrand.aoc.Utils.parsePoint;
+import static nl.jessebrand.aoc.Utils.toPoint;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
@@ -94,7 +94,7 @@ public class D15b2 {
 		String[] split1 = line.substring("Sensor at x=".length()).split(": closest beacon is at x=");
 		String[] splitLeft = split1[0].split(", y=");
 		String[] splitRight = split1[1].split(", y=");
-		return new Tuple(parsePoint(splitLeft[0], splitLeft[1]), parsePoint(splitRight[0], splitRight[1]));
+		return new Tuple(toPoint(splitLeft[0], splitLeft[1]), toPoint(splitRight[0], splitRight[1]));
 		
 	}
 

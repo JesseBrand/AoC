@@ -458,4 +458,8 @@ public class Utils {
 		}
 		return result;
 	}
+	
+	public static Point applyDirection(final Point p, final Direction dir) {
+		return new Point(p.x() + dir.getXInc(), p.y() + dir.getYInc());
+	}
 }

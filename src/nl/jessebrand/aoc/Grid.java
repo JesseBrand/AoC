@@ -1,6 +1,6 @@
 package nl.jessebrand.aoc;
 
-public class Grid<T> {
+public final class Grid<T> {
 
 	private final Object[][] values;
 	private final String separator;
@@ -10,8 +10,12 @@ public class Grid<T> {
 		this.separator = separator;
 	}
 
-	public void set(int x, int y, T value) {
+	public void set(final int x, final int y, final T value) {
 		values[y][x] = value;
+	}
+
+	public void set(final Point p, final T value) {
+		set(p.x(), p.y(), value);
 	}
 	
 	public int getWidth() {
@@ -27,11 +31,8 @@ public class Grid<T> {
 	}
 	
 	public T get(final int x, final int y) {
-		if (x < 0 || x >= getWidth()) {
+		if (!contains(x, y)) {
 			throw new IllegalStateException(String.format("x out of bounds: %d (%d - %d)", x, 0, getWidth()));
-		}
-		if (y < 0 || y >= getHeight()) {
-			throw new IllegalStateException(String.format("y out of bounds: %d (%d - %d)", y, 0, getHeight()));
 		}
 		return (T) values[y][x];
 	}
@@ -44,15 +45,20 @@ public class Grid<T> {
 	}
 	
 	public T getOr(final int x, final int y, final T def) {
-		if (x < 0 || x >= getWidth()) {
-			return def;
+		if (contains(x, y)) {
+			return (T) values[y][x];
 		}
-		if (y < 0 || y >= getHeight()) {
-			return def;
-		}
-		return (T) values[y][x];
+		return def;
 	}
 	
+	public boolean contains(final Point p) {
+		return contains(p.x(), p.y());
+	}
+
+	public boolean contains(int x, int y) {
+		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
+	}
+
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
@@ -63,5 +69,16 @@ public class Grid<T> {
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+	
+	@Override
+	public final Grid<T> clone() {
+		final Grid<T> result = new Grid<T>(getWidth(), getHeight(), separator);
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
+				result.set(x, y, get(x, y));
+			}
+		}
+		return result;
 	}
 }

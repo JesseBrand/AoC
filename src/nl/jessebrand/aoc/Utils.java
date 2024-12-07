@@ -308,6 +308,9 @@ public class Utils {
 		return lines.get(y).charAt(x);
 	}
 
+	/**
+	 * Standard parse using whitespace as separator.
+	 */
 	public static List<Integer> parseIntsFromString(final String string) {
 		return parseIntsFromString(string, "\s+");
 	}
@@ -316,6 +319,14 @@ public class Utils {
 		final List<Integer> result = new ArrayList<>();
 		for (String s : string.trim().split(separator)) {
 			result.add(Integer.parseInt(s.trim()));
+		}
+		return result;
+	}
+
+	public static List<Long> parseLongsFromString(final String string, final String separator) {
+		final List<Long> result = new ArrayList<>();
+		for (String s : string.trim().split(separator)) {
+			result.add(Long.parseLong(s.trim()));
 		}
 		return result;
 	}

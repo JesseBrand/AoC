@@ -473,4 +473,15 @@ public class Utils {
 	public static Point applyDirection(final Point p, final Direction dir) {
 		return new Point(p.x() + dir.getXInc(), p.y() + dir.getYInc());
 	}
+
+
+	public static <T> Set<T> findUniqueGridEntries(final Grid<T> grid) {
+		final Set<T> result = new HashSet<>();
+		for (int x = 0; x < grid.getWidth(); x++) {
+			for (int y = 0; y < grid.getHeight(); y++) {
+				result.add(grid.get(x, y));
+			}
+		}
+		return result;
+	}
 }

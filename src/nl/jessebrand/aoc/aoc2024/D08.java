@@ -6,6 +6,7 @@ import static nl.jessebrand.aoc.Utils.findUniqueGridEntries;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -21,57 +22,55 @@ public class D08 {
 		final List<String> lines = readFile("2024/d08");
 		final Grid<Character> grid = buildCharGrid(lines);
 //		System.out.println(grid);
-
-		final Set<Character> uniqueChars = findUniqueGridEntries(grid);
-		uniqueChars.remove('.');
 		
-		System.out.println("1: " + uniqueChars.stream().map(c -> findAntinodes(grid, c)).flatMap(Set::stream).collect(Collectors.toSet()).size());
-		System.out.println("2: " + uniqueChars.stream().map(c -> findAllAntinodes(grid, c)).flatMap(Set::stream).collect(Collectors.toSet()).size());
+		System.out.println("1: " + search(grid, false));
+		System.out.println("2: " + search(grid, true));
 	}
 
-	private static Set<Point> findAntinodes(Grid<Character> grid, final char c) {
+	private static int search(final Grid<Character> grid, final boolean all) {
+		final Set<Character> uniqueChars = findUniqueGridEntries(grid);
+		uniqueChars.remove('.');
+		return uniqueChars.stream().map(c -> findAntinodes(grid, c, all)).flatMap(Collection::stream).collect(Collectors.toSet()).size();
+	}
+
+	private static Collection<Point> findAntinodes(Grid<Character> grid, final char c, final boolean all) {
 		final List<Point> gridPoints = findGridPoints(grid, c);
-		final Set<Point> result = new HashSet<>();
+		final Collection<Point> result = new ArrayList<>();
 		for (int i0 = 0; i0 < gridPoints.size(); i0++) {
 			final Point s0 = gridPoints.get(i0);
 			for (int i1 = i0 + 1; i1 < gridPoints.size(); i1++) {
 				final Point s1 = gridPoints.get(i1);
-				final int xInc = s0.x() - s1.x();
-				final int yInc = s0.y() - s1.y();
-				final Point t0 = new Point(s0.x() + xInc, s0.y() + yInc);
-				if (grid.contains(t0)) {
-					result.add(t0);
+				if (all) {
+					result.addAll(findAllAntinodes(s0, s1, grid));
+				} else {
+					result.addAll(findAntinodes(s0, s1).stream().filter(grid::contains).toList());
 				}
-				final Point t1 = new Point(s1.x() - xInc, s1.y() - yInc);
-				if (grid.contains(t1)) {
-					result.add(t1);
-				}
-//				System.out.println("Calc for " + c + " " + s0 + " " + s1 + ": " + t0 + " and " + t1);
 			}
 		}
 		return result;
 	}
 
-	private static Set<Point> findAllAntinodes(final Grid<Character> grid, final char c) {
-		final List<Point> gridPoints = findGridPoints(grid, c);
-		final Set<Point> result = new HashSet<>();
-		for (int i0 = 0; i0 < gridPoints.size(); i0++) {
-			final Point s0 = gridPoints.get(i0);
-			for (int i1 = i0 + 1; i1 < gridPoints.size(); i1++) {
-				final Point s1 = gridPoints.get(i1);
-				final int xInc = s0.x() - s1.x();
-				final int yInc = s0.y() - s1.y();
-				Point t = s0;
-				while (grid.contains(t)) {
-					result.add(t);
-					t = new Point(t.x() + xInc, t.y() + yInc);
-				}
-				t = s1;
-				while (grid.contains(t)) {
-					result.add(t);
-					t = new Point(t.x() - xInc, t.y() - yInc);
-				}
-			}
+	private static Collection<Point> findAntinodes(final Point p0, final Point p1) {
+		final int xInc = p0.x() - p1.x();
+		final int yInc = p0.y() - p1.y();
+		return List.of(
+				new Point(p0.x() + xInc, p0.y() + yInc),
+				new Point(p1.x() - xInc, p1.y() - yInc));
+	}
+
+	private static Collection<Point> findAllAntinodes(final Point p0, final Point p1, final Grid<?> grid) {
+		final Collection<Point> result = new ArrayList<>();
+		final int xInc = p0.x() - p1.x();
+		final int yInc = p0.y() - p1.y();
+		Point t = p0;
+		while (grid.contains(t)) {
+			result.add(t);
+			t = new Point(t.x() + xInc, t.y() + yInc);
+		}
+		t = p1;
+		while (grid.contains(t)) {
+			result.add(t);
+			t = new Point(t.x() - xInc, t.y() - yInc);
 		}
 		return result;
 	}

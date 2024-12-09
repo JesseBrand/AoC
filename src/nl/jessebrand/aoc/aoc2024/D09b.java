@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class D09 {
+public class D09b {
 
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2024/d09");
@@ -30,7 +30,6 @@ public class D09 {
 
 	private static int[] parseFragmented(String string) {
 		final int length = (int) string.chars().map(c -> Integer.parseInt("" + (char) c)).sum();
-		System.out.println(length);
 		final int[] result = new int[length];
 		int x = 0;
 		for (int i = 0; i < string.length(); i++) {
@@ -45,15 +44,24 @@ public class D09 {
 	}
 
 	private static void defrag(int[] disk) {
-		while (true) {
-			int firstEmpty = findFirst(disk, -1);
-			int lastNonEmpty = findLastNot(disk, -1);
-			if (firstEmpty > lastNonEmpty) {
-				return;
+		int x = disk.length - 1;
+		while (x > 0) {
+			int curEnd = findLastNot(disk, -1, x);
+			int val = disk[curEnd];
+			int curStart = findFirst(disk, val);
+			int curLength = curEnd - curStart + 1;
+			output("%d is %d long (%d-%d)", val, curLength, curStart, curEnd);
+			int targetStart = findFirst(disk, -1, curLength);
+			if (targetStart != -1 && targetStart < curStart) {
+				// TODO
+				output("Moving block to %d", targetStart);
+				for (int i = 0; i < curLength; i++) {
+					disk[targetStart + i] = val;
+					disk[curStart + i]  = -1;
+				}
 			}
-			output("Switching %d (%d) and %d (%d)", firstEmpty, disk[firstEmpty], lastNonEmpty, disk[lastNonEmpty]);
-			disk[firstEmpty] = disk[lastNonEmpty];
-			disk[lastNonEmpty] = -1;
+
+			x = curStart - 1;
 		}
 	}
 
@@ -67,11 +75,29 @@ public class D09 {
 				return i;
 			}
 		}
-		throw new IllegalStateException();
+		return -1;
 	}
 
-	private static int findLastNot(int[] disk, int val) {
-		for (int i = disk.length - 1; i >= 0; i--) {
+	private static int findFirst(int[] disk, int val, int length) {
+		for (int i = 0; i < disk.length; i++) {
+			if (disk[i] == val) {
+				boolean valid = true;
+				for (int j = 0; j < length; j++) {
+					if (i + j >= disk.length || disk[i + j] != val) {
+						valid = false;
+						break;
+					}
+				}
+				if (valid) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	private static int findLastNot(int[] disk, int val, int start) {
+		for (int i = start; i >= 0; i--) {
 			if (disk[i] != val) {
 				return i;
 			}

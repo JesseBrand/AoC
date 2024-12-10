@@ -484,4 +484,12 @@ public class Utils {
 		}
 		return result;
 	}
+
+	public static List<Point> getNeighbours(final Point p) {
+		return Arrays.asList(
+				new Point(p.x(), p.y() - 1),
+				new Point(p.x() + 1, p.y()),
+				new Point(p.x(), p.y() + 1),
+				new Point(p.x() - 1, p.y()));
+	}
 }

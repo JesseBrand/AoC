@@ -216,11 +216,11 @@ public class Utils {
 		return result;
 	}
 	
-	public static void out(String format, Object...args) {
+	public static void out(final String format, final Object...args) {
 		System.out.println(String.format(format, args));
 	}
 
-	public static void out(Object o) {
+	public static void out(final Object o) {
 		System.out.println(o);
 	}
 

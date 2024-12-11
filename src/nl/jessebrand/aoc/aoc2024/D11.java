@@ -7,15 +7,13 @@ import static nl.jessebrand.aoc.Utils.readFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class D11 {
 	
-	private static final List<Long> LIST_1 = Arrays.asList((long) 1);
-	private static final Map<Long, List<Long>> MAPPED = new HashMap<>();
+	private static final List<Long> LIST_1 = Arrays.asList(1L);
 	private static final List<Map<Long, Long>> DEEP_MAPPED = new ArrayList<>();
 	
 	static {
@@ -48,11 +46,7 @@ public class D11 {
 		public abstract List<Long> apply(Long i);
 		
 		public static List<Long> applyAny(Long i) {
-			if (!MAPPED.containsKey(i)) {
-//				System.out.println("Added " + i);
-				MAPPED.put(i, getByLong(i).apply(i));
-			}
-			return MAPPED.get(i);
+			return getByLong(i).apply(i);
 		}
 		
 		public static Operation getByLong(Long i) {
@@ -67,30 +61,25 @@ public class D11 {
 	}
 
 	public static void main(String[] args) throws IOException {
+		long start = System.currentTimeMillis();
 		final List<String> lines = readFile("2024/d11");
 		List<Long> set = parseLongsFromString(lines.get(0));
 		out("1: %s", processDFS(set, 25));
 		out("2: %s", processDFS(set, 75));
+		out("Finished in %dms", System.currentTimeMillis() - start);
 	}
 
-	private static int processBFS(List<Long> set, int times) {
-		if (times == 0) {
-			return set.size();
-		}
-		return set.stream().map(i -> Operation.getByLong(i).apply(i)).mapToInt(l -> processBFS(l, times - 1)).sum();
+	private static long processDFS(final List<Long> set, final int rep) {
+		return set.stream().mapToLong(i -> processDFS(i, rep)).sum();
 	}
 
-	private static long processDFS(List<Long> set, int times) {
-		return set.stream().mapToLong(i -> processDFS(i, times)).sum();
-	}
-
-	private static long processDFS(long i, int times) {
-		final Map<Long, Long> map = DEEP_MAPPED.get(times);
+	private static long processDFS(final long i, final int rep) {
+		final Map<Long, Long> map = DEEP_MAPPED.get(rep);
 		if (!map.containsKey(i)) {
-			if (times == 0) {
+			if (rep == 0) {
 				map.put(i, 1L);
 			} else {
-				map.put(i, processDFS(Operation.applyAny(i), times - 1));
+				map.put(i, processDFS(Operation.applyAny(i), rep - 1));
 			}
 		}
 		return map.get(i);

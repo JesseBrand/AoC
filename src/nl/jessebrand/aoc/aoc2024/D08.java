@@ -4,14 +4,13 @@ import static nl.jessebrand.aoc.Utils.buildCharGrid;
 import static nl.jessebrand.aoc.Utils.findGridPoints;
 import static nl.jessebrand.aoc.Utils.findUniqueGridEntries;
 import static nl.jessebrand.aoc.Utils.readFile;
+import static nl.jessebrand.aoc.Utils.set;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import nl.jessebrand.aoc.Grid;
 import nl.jessebrand.aoc.Point;
@@ -30,7 +29,7 @@ public class D08 {
 	private static int search(final Grid<Character> grid, final boolean all) {
 		final Set<Character> uniqueChars = findUniqueGridEntries(grid);
 		uniqueChars.remove('.');
-		return uniqueChars.stream().map(c -> findAntinodes(grid, c, all)).flatMap(Collection::stream).collect(Collectors.toSet()).size();
+		return set(uniqueChars.stream().map(c -> findAntinodes(grid, c, all))).size();
 	}
 
 	private static Collection<Point> findAntinodes(Grid<Character> grid, final char c, final boolean all) {

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Utils {
     public static String glue(String sep, List<?> values) {
@@ -224,26 +225,24 @@ public class Utils {
 		System.out.println(o);
 	}
 
-	public static <T> Set<T> set(Set<T> set1, Set<T> set2) {
-		final Set<T> result = new HashSet<>(set1);
-		result.addAll(set2);
-		return result;
+	public static <T> Set<T> set(final Set<T>... sets) {
+		return set(Arrays.asList(sets));
+	}
+
+	public static <T> Set<T> set(final Collection<Set<T>> sets) {
+		return sets.stream().flatMap(Collection::stream).collect(Collectors.toSet());
+	}
+
+	public static <T> Set<T> set(final Stream<Collection<T>> stream) {
+		return stream.flatMap(Collection::stream).collect(Collectors.toSet());
 	}
 
 	public static List<Integer> multiply(List<Integer> ints, int multiplier) {
-		final List<Integer> result = new ArrayList<>(ints.size());
-		for (int i : ints) {
-			result.add(i * multiplier);
-		}
-		return result;
+		return ints.stream().map(i -> i * multiplier).toList();
 	}
 
 	public static List<Long> multiply(List<Integer> ints, long multiplier) {
-		final List<Long> result = new ArrayList<>(ints.size());
-		for (int i : ints) {
-			result.add((long) i * multiplier);
-		}
-		return result;
+		return ints.stream().map(i -> (long) i * multiplier).toList();
 	}
 	
 	public static <T> void assertEquals(long expected, long value) {

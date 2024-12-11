@@ -25,31 +25,31 @@ public class D11 {
 	private static enum Operation {
 		TO_1 {
 			@Override
-			public List<Long> apply(Long i) {
+			public List<Long> apply(final Long i) {
 				return LIST_1;
 			}
 		},
 		SPLIT {
 			@Override
-			public List<Long> apply(Long i) {
-				String s = "" + i;
+			public List<Long> apply(final Long i) {
+				final String s = "" + i;
 				return Arrays.asList(Long.parseLong(s.substring(0, s.length() / 2)), Long.parseLong(s.substring(s.length() / 2)));
 			}
 		},
 		TIMES_2024 {
 			@Override
-			public List<Long> apply(Long i) {
+			public List<Long> apply(final Long i) {
 				return Arrays.asList(i * 2024);
 			}
 		};
 		
-		public abstract List<Long> apply(Long i);
+		public abstract List<Long> apply(final Long i);
 		
-		public static List<Long> applyAny(Long i) {
+		public static List<Long> applyAny(final Long i) {
 			return getByLong(i).apply(i);
 		}
 		
-		public static Operation getByLong(Long i) {
+		public static Operation getByLong(final Long i) {
 			if (i == 0) {
 				return TO_1;
 			}
@@ -61,7 +61,7 @@ public class D11 {
 	}
 
 	public static void main(String[] args) throws IOException {
-		long start = System.currentTimeMillis();
+		final long start = System.currentTimeMillis();
 		final List<String> lines = readFile("2024/d11");
 		List<Long> set = parseLongsFromString(lines.get(0));
 		out("1: %s", processDFS(set, 25));

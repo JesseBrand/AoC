@@ -16,12 +16,6 @@ public class D11 {
 	private static final List<Long> LIST_1 = Arrays.asList(1L);
 	private static final List<Map<Long, Long>> DEEP_MAPPED = new ArrayList<>();
 	
-	static {
-		for (int i = 0; i < 76; i++) {
-			DEEP_MAPPED.add(new HashMap<>());
-		}
-	}
-	
 	private static enum Operation {
 		TO_1 {
 			@Override
@@ -64,9 +58,16 @@ public class D11 {
 		final long start = System.currentTimeMillis();
 		final List<String> lines = readFile("2024/d11");
 		List<Long> set = parseLongsFromString(lines.get(0));
-		out("1: %s", processDFS(set, 25));
-		out("2: %s", processDFS(set, 75));
+		out("1: %s", solveDFS(set, 25));
+		out("2: %s", solveDFS(set, 75));
 		out("Finished in %dms", System.currentTimeMillis() - start);
+	}
+
+	private static long solveDFS(final List<Long> set, final int rep) {
+		while (DEEP_MAPPED.size() < rep) {
+			DEEP_MAPPED.add(new HashMap<>());
+		}
+		return processDFS(set, rep);
 	}
 
 	private static long processDFS(final List<Long> set, final int rep) {
@@ -74,13 +75,13 @@ public class D11 {
 	}
 
 	private static long processDFS(final long i, final int rep) {
-		final Map<Long, Long> map = DEEP_MAPPED.get(rep);
+		if (rep == 0) {
+			return 1L;
+		}
+		final Map<Long, Long> map = DEEP_MAPPED.get(rep - 1);
 		if (!map.containsKey(i)) {
-			if (rep == 0) {
-				map.put(i, 1L);
-			} else {
-				map.put(i, processDFS(Operation.applyAny(i), rep - 1));
-			}
+			map.put(i, processDFS(Operation.applyAny(i), rep - 1));
+			out("Added %d(%d/%d)[%d -> %d]", rep, map.size(), DEEP_MAPPED.stream().mapToInt(Map::size).sum(), i, map.get(i));
 		}
 		return map.get(i);
 	}

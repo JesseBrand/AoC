@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Utils {
-    public static String glue(String sep, List<?> values) {
+
+	public static final Comparator<? super Point> POINT_COMPARATOR = new Comparator<Point>() {
+
+		@Override
+		public int compare(Point p1, Point p2) {
+			if (p1 == p2) {
+				return 0;
+			}
+			if (p1.y() != p2.y()) {
+				return p1.y() - p2.y();
+			}
+			if (p1.x() != p2.x()) {
+				return p1.x() - p2.x();
+			}
+			return 0;
+		}
+    	
+    };
+
+	public static String glue(String sep, List<?> values) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.size(); i++) {
             if (i > 0) {
@@ -471,6 +491,10 @@ public class Utils {
 	
 	public static Point applyDirection(final Point p, final Direction dir) {
 		return new Point(p.x() + dir.getXInc(), p.y() + dir.getYInc());
+	}
+
+	public static Point applyDirectionInverse(final Point p, final Direction dir) {
+		return new Point(p.x() - dir.getXInc(), p.y() - dir.getYInc());
 	}
 
 

@@ -44,6 +44,10 @@ public final class Grid<T> {
 		return getOr(x, y, null);
 	}
 	
+	public T getOr(final Point p, final T def) {
+		return getOr(p.x(), p.y(), def);
+	}
+
 	public T getOr(final int x, final int y, final T def) {
 		if (contains(x, y)) {
 			return (T) values[y][x];

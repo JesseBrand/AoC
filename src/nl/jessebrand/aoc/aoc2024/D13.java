@@ -4,11 +4,12 @@ import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class D13 {
 	
-	private static final long bInc = 10000000000000L;
+	private static final long part2Inc = 10000000000000L;
 	
 	private static record Machine(int ax, int ay, int bx, int by, long prizeX, long prizeY) {
 		
@@ -23,26 +24,33 @@ public class D13 {
 
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2024/d13");
+		final List<Machine> machines = new ArrayList<>();
+		for (int i = 0; i < lines.size(); i += 4) {
+			machines.add(parseMachine(lines.get(i), lines.get(i + 1), lines.get(i + 2)));
+		}
 		long total1 = 0;
 		long total2 = 0;
-		for (int i = 0; i < lines.size(); i += 4) {
-			Machine machine = parseMachine(lines.get(i), lines.get(i + 1), lines.get(i + 2));
-			Result mResult = calculateResult(machine);
-			if (mResult != null) {
-				total1 += mResult.a() * 3 + mResult.b();
+		for (final Machine machine : machines) {
+			final Result result1 = calculateResult(machine);
+			if (result1 != null) {
+				total1 += result1.a() * 3 + result1.b();
 			}
 //			out("Find: %s", findResult(machine));
 //			out("Calc: %s", mResult);
 
-			Machine machine2 = new Machine(machine.ax(), machine.ay(), machine.bx(), machine.by(), machine.prizeX() + bInc, machine.prizeY() + bInc);
-			Result mResult2 = calculateResult(machine2);
-			out(mResult2);
-			if (mResult2 != null) {
-				total2 += mResult2.a() * 3 + mResult2.b();
+			final Machine machine2 = new Machine(machine.ax(), machine.ay(), machine.bx(), machine.by(), machine.prizeX() + part2Inc, machine.prizeY() + part2Inc);
+			final Result result2 = calculateResult(machine2);
+			out(result2);
+			if (result2 != null) {
+				total2 += result2.a() * 3 + result2.b();
 			}
 		}
 		out("1: %d", total1);
 		out("2: %d", total2);
+	}
+	
+	private static long score(final Result result) {
+		return result.a() * 3 + result.b();
 	}
 
 	private static Result calculateResult(Machine m) {

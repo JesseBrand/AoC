@@ -5,6 +5,10 @@ public final class Grid<T> {
 	private final Object[][] values;
 	private final String separator;
 
+	public Grid(int width, int height) {
+		this(width, height, "");
+	}
+
 	public Grid(int width, int height, String separator) {
 		values = new Object[height][width];
 		this.separator = separator;
@@ -24,6 +28,14 @@ public final class Grid<T> {
 	
 	public int getHeight() {
 		return values.length;
+	}
+
+	public void init(T initValue) {
+		for (int y = 0; y < getHeight(); y++) { 
+			for (int x = 0; x < getWidth(); x++) {
+				set(x, y, initValue);
+			}
+		}
 	}
 	
 	public T get(Point loc) {

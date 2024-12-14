@@ -9,6 +9,11 @@ public final class Grid<T> {
 		this(width, height, "");
 	}
 
+	public Grid(int width, int height, T initValue) {
+		this(width, height, "");
+		init(initValue);
+	}
+
 	public Grid(int width, int height, String separator) {
 		values = new Object[height][width];
 		this.separator = separator;

@@ -1,5 +1,8 @@
 package nl.jessebrand.aoc;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,9 +14,13 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class Utils {
 
@@ -515,4 +522,70 @@ public class Utils {
 				new Point(p.x(), p.y() + 1),
 				new Point(p.x() - 1, p.y()));
 	}
+
+	public static JFrame visualize(final String title, final int contentWidth, final int contentHeight, final Consumer<Graphics> renderer) {
+		final JFrame frame = new JFrame(title);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		final JPanel panel = new RenderPanel(renderer);
+		panel.setPreferredSize(new Dimension(contentWidth, contentHeight));
+		
+		frame.add(panel);
+		frame.setResizable(false);
+		frame.setBackground(Color.GRAY);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		return frame;
+	}
+
+	
+	public static void visualize(final String title, final int contentWidth, final int contentHeight, final Consumer<Graphics> renderer, Consumer<Integer> processor, final long msPerFrame) {
+		final JFrame frame = visualize(title, contentWidth, contentHeight, renderer);
+		new Thread(new VisualiseRunner(frame, processor, msPerFrame)).start();
+	}
+
+	private static class RenderPanel extends JPanel {
+		private final Consumer<Graphics> renderer;
+
+		public RenderPanel(final Consumer<Graphics> renderer) {
+			this.renderer = renderer;
+		}
+
+		@Override
+		public void paint(final Graphics g) {
+			renderer.accept(g);
+		}
+	}
+
+
+	private static class VisualiseRunner implements Runnable {
+		
+		private final JFrame frame;
+		private final Consumer<Integer> processor;
+		private final long msPerFrame;
+		
+		private int i = 0;
+		
+		public VisualiseRunner(JFrame frame, final Consumer<Integer> processor, final long msPerFrame) {
+			this.frame = frame;
+			this.processor = processor;
+			this.msPerFrame = msPerFrame;
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				i++;
+				processor.accept(i);
+				frame.repaint();
+				try {
+					Thread.sleep(msPerFrame);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+
 }

@@ -6,6 +6,8 @@ import static nl.jessebrand.aoc.Utils.readFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class D13 {
 	
@@ -24,29 +26,13 @@ public class D13 {
 
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2024/d13");
-		final List<Machine> machines = new ArrayList<>();
-		for (int i = 0; i < lines.size(); i += 4) {
-			machines.add(parseMachine(lines.get(i), lines.get(i + 1), lines.get(i + 2)));
-		}
-		long total1 = 0;
-		long total2 = 0;
-		for (final Machine machine : machines) {
-			final Result result1 = calculateResult(machine);
-			if (result1 != null) {
-				total1 += result1.a() * 3 + result1.b();
-			}
-//			out("Find: %s", findResult(machine));
-//			out("Calc: %s", mResult);
-
-			final Machine machine2 = new Machine(machine.ax(), machine.ay(), machine.bx(), machine.by(), machine.prizeX() + part2Inc, machine.prizeY() + part2Inc);
-			final Result result2 = calculateResult(machine2);
-			out(result2);
-			if (result2 != null) {
-				total2 += result2.a() * 3 + result2.b();
-			}
-		}
-		out("1: %d", total1);
-		out("2: %d", total2);
+		final List<Machine> machines = IntStream.range(0, (lines.size() + 3) / 4).mapToObj(i -> parseMachine(lines.get(i * 4), lines.get(i * 4 + 1), lines.get(i * 4 + 2))).toList();
+		out("1: %d", machines.stream().map(D13::calculateResult).filter(Objects::nonNull).mapToLong(D13::score).sum());
+		out("2: %d", machines.stream().map(D13::convertPart2).map(D13::calculateResult).filter(Objects::nonNull).mapToLong(D13::score).sum());
+	}
+	
+	private static Machine convertPart2(final Machine machine) {
+		return new Machine(machine.ax(), machine.ay(), machine.bx(), machine.by(), machine.prizeX() + part2Inc, machine.prizeY() + part2Inc);
 	}
 	
 	private static long score(final Result result) {
@@ -54,10 +40,10 @@ public class D13 {
 	}
 
 	private static Result calculateResult(Machine m) {
-		double da = (double) m.ay() / m.ax();
-		double db = (double) m.by() / m.bx();
-		double dPlus = m.prizeY - (m.prizeX * db);
-		double tX = dPlus / (da - db);
+		final double da = (double) m.ay() / m.ax();
+		final double db = (double) m.by() / m.bx();
+		final double dPlus = m.prizeY - (m.prizeX * db);
+		final double tX = dPlus / (da - db);
 		out("a(x) = %fx;   b(x) = %fx %s %.3f;  intersect at x = %.3f;   %s", da, db, dPlus > 0 ? '+' : '-', Math.abs(dPlus), tX, m);
 		final long a = Math.round(tX) / m.ax();
 		final long b = (m.prizeX() - Math.round(tX)) / m.bx();
@@ -83,10 +69,10 @@ public class D13 {
 		return null;
 	}
 
-	private static Machine parseMachine(String line1, String line2, String line3) {
-		String[] split1 = line1.split(" ");
-		String[] split2 = line2.split(" ");
-		String[] split3 = line3.split(" ");
+	private static Machine parseMachine(final String line1, final String line2, final String line3) {
+		final String[] split1 = line1.split(" ");
+		final String[] split2 = line2.split(" ");
+		final String[] split3 = line3.split(" ");
 		return new Machine(
 				split1[2].substring(2, split1[2].length() - 1),
 				split1[3].substring(2),

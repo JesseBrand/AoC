@@ -41,10 +41,10 @@ public class D15 {
 		final Grid<Character> grid1 = buildCharGrid(gridLines);
 		final Grid<Character> grid2 = convertToLargeGrid(grid1);
 
-//		out(grid1);
-//		instructions.chars().mapToObj(D15::toDir).forEach(d -> performMove(grid1, d));
-//		out(grid1);
-//		out(findGridPoints(grid1, 'O').stream().mapToInt(D15::calcCoordinates).sum());
+		out(grid1);
+		instructions.chars().mapToObj(D15::toDir).forEach(d -> performMove(grid1, d));
+		out(grid1);
+		out(findGridPoints(grid1, 'O').stream().mapToInt(D15::calcCoordinates).sum());
 		
 		out(grid2);
 		instructions.chars().mapToObj(D15::toDir).forEach(d -> performMove(grid2, d));
@@ -52,30 +52,30 @@ public class D15 {
 		out(findGridPoints(grid2, '[').stream().mapToInt(D15::calcCoordinates).sum());
 	}
 
-	private static Grid<Character> convertToLargeGrid(Grid<Character> grid1) {
-		final Grid<Character> result = new Grid<>(grid1.getWidth() * 2, grid1.getHeight());
-		for (int y = 0; y < grid1.getHeight(); y++) {
-			for (int x = 0; x < grid1.getWidth(); x++) {
-				char[] mapped = map(grid1.get(x, y));
-				result.set(x * 2, y, mapped[0]);
-				result.set(x * 2 + 1, y, mapped[1]);
+	private static Grid<Character> convertToLargeGrid(final Grid<Character> origGrid) {
+		final Grid<Character> result = new Grid<>(origGrid.getWidth() * 2, origGrid.getHeight());
+		for (int y = 0; y < origGrid.getHeight(); y++) {
+			for (int x = 0; x < origGrid.getWidth(); x++) {
+				final String mapped = map(origGrid.get(x, y));
+				result.set(x * 2, y, mapped.charAt(0));
+				result.set(x * 2 + 1, y, mapped.charAt(1));
 			}
 		}
 		return result;
 	}
 
-	private static char[] map(char c) {
+	private static String map(final char c) {
 		return switch(c) {
-			case '@' -> new char[] {'@', '.'};
-			case '#' -> new char[] {'#', '#'};
-			case '.' -> new char[] {'.', '.'};
-			case 'O' -> new char[] {'[', ']'};
+			case '@' -> "@.";
+			case '#' -> "##";
+			case '.' -> "..";
+			case 'O' -> "[]";
 			default -> throw new IllegalArgumentException();
 		};
 	}
 
-	private static void performMove(final Grid<Character> grid, Direction dir) {
-		out("\n%s%s, %s", grid, dir, findGridPoint(grid, '@'));
+	private static void performMove(final Grid<Character> grid, final Direction dir) {
+//		out("\n%s%s, %s", grid, dir, findGridPoint(grid, '@'));
 		if (dir == Direction.EAST || dir == Direction.WEST) {
 			performEWMove(grid, dir);
 		} else {
@@ -90,18 +90,18 @@ public class D15 {
 		byLine.put(curY, new HashSet<>(Arrays.asList(robotP.x())));
 		while (true) {
 			final int nextY = curY + dir.getYInc();
-			out("%d->%d", curY, nextY);
+//			out("%d->%d", curY, nextY);
 			final Set<Integer> curLineList = byLine.get(curY);
 			if (curLineList.isEmpty()) {
-				// ok move
+				// valid, perform move
 				break;
 			}
 			final Set<Integer> nextLineList = new LinkedHashSet<>();
 			for (int x : curLineList) {
 				char c = grid.get(x, nextY);
-				out("%d,%d = %c", x, nextY, c);
+//				out("%d,%d = %c", x, nextY, c);
 				if (c == '#') {
-					// can't move
+					// blocked, can't move
 					return;
 				}
 				if (c == 'O') {
@@ -119,10 +119,10 @@ public class D15 {
 			byLine.put(nextY, nextLineList);
 			curY = nextY;
 		}
-		out(byLine);
+//		out(byLine);
 		final List<Entry<Integer, Set<Integer>>> list = new ArrayList<>(byLine.entrySet());
 		Collections.reverse(list);
-		for (Entry<Integer, Set<Integer>> entry : list) {
+		for (final Entry<Integer, Set<Integer>> entry : list) {
 			curY = entry.getKey();
 			int nextY = curY + dir.getYInc();
 			for (int x : entry.getValue()) {
@@ -132,7 +132,7 @@ public class D15 {
 		}
 	}
 
-	private static void performEWMove(final Grid<Character> grid, Direction dir) {
+	private static void performEWMove(final Grid<Character> grid, final Direction dir) {
 		final Point robotP = findGridPoint(grid, '@');
 		Point search = robotP;
 		while (true) {
@@ -154,7 +154,7 @@ public class D15 {
 		grid.set(robotP, '.');
 	}
 
-	private static Direction toDir(int c) {
+	private static Direction toDir(final int c) {
 		return switch(c) {
 			case '<' -> Direction.WEST;
 			case '^' -> Direction.NORTH;

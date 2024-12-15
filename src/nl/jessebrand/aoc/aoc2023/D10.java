@@ -1,5 +1,6 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.applyDirection;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
@@ -63,28 +64,28 @@ public class D10 {
 		final int pathLength = grid.getPathLength(p);
 		final List<Point> result = new ArrayList<>();
 		// left
-		final Point w = p.apply(Direction.WEST);
+		final Point w = applyDirection(p, Direction.WEST);
 		if (grid.getPathLength(w) == -1 && LEFT_OPTIONS.contains(grid.getCharacter(w))
 				&& RIGHT_OPTIONS.contains(c)) {
 			grid.setPathLength(w, pathLength + 1);
 			result.add(w);
 		}
 		// right
-		final Point e = p.apply(Direction.EAST);
+		final Point e = applyDirection(p, Direction.EAST);
 		if (grid.getPathLength(e) == -1 && RIGHT_OPTIONS.contains(grid.getCharacter(e))
 				&& LEFT_OPTIONS.contains(c)) {
 			grid.setPathLength(e, pathLength + 1);
 			result.add(e);
 		}
 		// up
-		final Point n = p.apply(Direction.NORTH);
+		final Point n = applyDirection(p, Direction.NORTH);
 		if (grid.getPathLength(n) == -1 && UP_OPTIONS.contains(grid.getCharacter(n))
 				&& DOWN_OPTIONS.contains(c)) {
 			grid.setPathLength(n, pathLength + 1);
 			result.add(n);
 		}
 		// down
-		final Point s = p.apply(Direction.SOUTH);
+		final Point s = applyDirection(p, Direction.SOUTH);
 		if (grid.getPathLength(s) == -1 && DOWN_OPTIONS.contains(grid.getCharacter(s))
 				&& UP_OPTIONS.contains(c)) {
 			grid.setPathLength(s, pathLength + 1);

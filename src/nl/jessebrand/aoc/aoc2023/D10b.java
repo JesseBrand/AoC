@@ -1,5 +1,6 @@
 package nl.jessebrand.aoc.aoc2023;
 
+import static nl.jessebrand.aoc.Utils.applyDirection;
 import static nl.jessebrand.aoc.Utils.readFile;
 import static nl.jessebrand.aoc.aoc2023.D10.findMainLoop;
 import static nl.jessebrand.aoc.aoc2023.D10.findStart;
@@ -36,10 +37,10 @@ public class D10b {
 	}
 
 	private static void replaceStart(final Grid grid, final Point start) {
-		final boolean n = grid.getPathLength(start.apply(Direction.NORTH)) == 1;
-		final boolean s = grid.getPathLength(start.apply(Direction.SOUTH)) == 1;
-		final boolean e = grid.getPathLength(start.apply(Direction.EAST)) == 1;
-		final boolean w = grid.getPathLength(start.apply(Direction.WEST)) == 1;
+		final boolean n = grid.getPathLength(applyDirection(start, Direction.NORTH)) == 1;
+		final boolean s = grid.getPathLength(applyDirection(start, Direction.SOUTH)) == 1;
+		final boolean e = grid.getPathLength(applyDirection(start, Direction.EAST)) == 1;
+		final boolean w = grid.getPathLength(applyDirection(start, Direction.WEST)) == 1;
 		final char newChar = n ? w ? 'J' : e ? 'L' : '|' : s ? w ? '7' : 'F' : '-';
 		grid.update(start, newChar);
 	}
@@ -76,7 +77,7 @@ public class D10b {
 
 		fillNeighboursInside(grid, p, fillDir, 'I');
 
-		final Point next = p.apply(dir);
+		final Point next = applyDirection(p, dir);
 		final Direction newDir = switch (dir) {
 			case NORTH -> switch (grid.getCharacter(next)) {
 				case '7' -> Direction.WEST;
@@ -134,7 +135,7 @@ public class D10b {
 	private static void fillNeighboursInside(final Grid grid, final Point p, final D8 dir, final char fillWith) {
 //		System.out.println(String.format("%s: Paint %s %c", p, dir, grid.getCharacter(p)));
 		dir.directions().stream()
-				.map(d -> p.apply(d))
+				.map(d -> applyDirection(p, d))
 				.forEach(p2 -> fillReachable(grid, p2, fillWith));
 	}
 
@@ -166,7 +167,7 @@ public class D10b {
 		for (Point p : outsidePoints) {
 			grid.update(p, fillWith);
 			for (final Direction dir : Direction.values()) {
-				final Point newP = p.apply(dir);
+				final Point newP = applyDirection(p, dir);
 				if (grid.getCharacter(newP) == '.') {
 					result.add(newP);
 				}

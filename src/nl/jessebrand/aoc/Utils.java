@@ -248,6 +248,10 @@ public class Utils {
 		System.out.println(String.format(format, args));
 	}
 
+	public static void out() {
+		System.out.println();
+	}
+
 	public static void out(final Object o) {
 		System.out.println(o);
 	}
@@ -482,6 +486,20 @@ public class Utils {
 			}
 		}
 		return grid;
+	}
+
+	/**
+	 * throws error if not 1
+	 */
+	public static <T> Point findGridPoint(final Grid<T> grid, final T o) {
+		List<Point> result = findGridPoints(grid, o);
+		if (result.size() == 0) {
+			throw new IllegalStateException("No grid point found: " + o);
+		}
+		if (result.size() > 1) {
+			throw new IllegalStateException("Multiple grid points found: " + result);
+		}
+		return result.get(0);
 	}
 
 	public static <T> List<Point> findGridPoints(final Grid<T> grid, final T o) {

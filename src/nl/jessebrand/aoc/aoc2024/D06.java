@@ -104,7 +104,7 @@ public class D06 {
 					guard = new Guard(target, guard.dir());
 					break;
 				case BLOCKED:
-					guard = new Guard(guard.pos(), rotateRight(guard.dir()));
+					guard = new Guard(guard.pos(), guard.dir().rotateRight());
 					break;
 				}
 			}
@@ -125,15 +125,6 @@ public class D06 {
 			}
 		}
 		return result;
-	}
-
-	private static Direction rotateRight(Direction dir) {
-		return switch(dir) {
-			case NORTH -> Direction.EAST;
-			case EAST -> Direction.SOUTH;
-			case SOUTH -> Direction.WEST;
-			case WEST -> Direction.NORTH;
-		};
 	}
 
 	private static Guard findGuard(List<String> lines) {

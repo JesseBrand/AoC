@@ -21,4 +21,22 @@ public enum Direction {
 	public int getYInc() {
 		return yInc;
 	}
+
+	public Direction rotateLeft() {
+		return switch(this) {
+			case NORTH -> Direction.WEST;
+			case EAST -> Direction.NORTH;
+			case SOUTH -> Direction.EAST;
+			case WEST -> Direction.SOUTH;
+		};
+	}
+
+	public Direction rotateRight() {
+		return switch(this) {
+		case NORTH -> Direction.EAST;
+		case EAST -> Direction.SOUTH;
+		case SOUTH -> Direction.WEST;
+		case WEST -> Direction.NORTH;
+		};
+	}
 }

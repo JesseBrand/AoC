@@ -7,7 +7,6 @@ import static nl.jessebrand.aoc.Utils.readFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,15 +19,15 @@ import nl.jessebrand.aoc.Point;
 
 public class D16 {
 	
-	private record Path(List<Point> points, int value) implements Comparable<Path> {
+	private record Path(int value, List<Point> points) implements Comparable<Path> {
 		
-		Path(final Point p, final int value) {
-			this(new ArrayList<>(), value);
+		Path(final int value, final Point p) {
+			this(value, new ArrayList<>());
 			points().add(p);
 		}
 
-		Path(final Path prev, final Point p, final int value) {
-			this(new ArrayList<>(prev.points()), value);
+		Path(final int value, final Path prev, final Point p) {
+			this(value, new ArrayList<>(prev.points()));
 			points().add(p);
 		}
 
@@ -36,7 +35,6 @@ public class D16 {
 		public int compareTo(Path o) {
 			return Integer.compare(value(), o.value());
 		}
-		
 	}
 	
 	private static class GridSquare {
@@ -69,7 +67,7 @@ public class D16 {
 		}
 		
 		public List<Path> allPaths() {
-			return paths.values().stream().flatMap(Collection::stream).toList();
+			return paths.values().stream().flatMap(Collection::stream).sorted().toList();
 		}
 		
 		@Override
@@ -90,12 +88,10 @@ public class D16 {
 		out("2: %d", solutions.stream().map(Path::points).flatMap(Collection::stream).collect(Collectors.toSet()).size());
 	}
 	
-	
-
 	private static List<Path> findSolution(final Input input, final Direction startDir, final int incMove, final int incTurn) {
 		final Point start = input.start();
 		final Grid<GridSquare> grid = input.grid();
-		grid.get(input.start()).addPath(startDir, new Path(start, 0));
+		grid.get(input.start()).addPath(startDir, new Path(0, start));
 		
 		final List<Attempt> attempts = new LinkedList<>();
 		attempts.add(new Attempt(start, startDir));
@@ -107,39 +103,36 @@ public class D16 {
 			final Direction dir = attempt.dir();
 			final List<Path> curPaths = grid.get(p).getStoredPaths(dir); // all same length
 
-			attemptDir(grid, attempts, p, curPaths, dir, incMove);
-			attemptDir(grid, attempts, p, curPaths, dir.rotateLeft(), incMove + incTurn);
-			attemptDir(grid, attempts, p, curPaths, dir.rotateRight(), incMove + incTurn);
+			attempts.addAll(attemptDir(grid, p, curPaths, dir, incMove));
+			attempts.addAll(attemptDir(grid, p, curPaths, dir.rotateLeft(), incMove + incTurn));
+			attempts.addAll(attemptDir(grid, p, curPaths, dir.rotateRight(), incMove + incTurn));
 		}
-		out(grid.get(input.end()));
-		List<Path> paths = new ArrayList<>(grid.get(input.end()).allPaths());
-		Collections.sort(paths);
+		out(grid.get(input.end()).allPaths());
+		final List<Path> paths = new ArrayList<>(grid.get(input.end()).allPaths());
 		int lowest = paths.get(0).value();
-		paths = paths.stream().filter(p -> p.value() == lowest).toList();
-		return paths;
+		return paths.stream().filter(p -> p.value() == lowest).toList();
 	}
 
+	private static List<Attempt> attemptDir(final Grid<GridSquare> grid, final Point p, final List<Path> curPaths, final Direction dir, final int valueInc) {
+		final List<Attempt> attempts = new ArrayList<>();
 
-
-	private static void attemptDir(final Grid<GridSquare> grid, final List<Attempt> attempts, final Point p, final List<Path> curPaths, final Direction dir, final int inc) {
 		final int curLength = curPaths.get(0).value();
 		final Point newP = applyDirection(p, dir);
-
+		
 		if (!grid.get(newP).isWall()) {
-			int newVal = curLength + inc;
+			final int newVal = curLength + valueInc;
 			final List<Path> storedPaths = grid.get(newP).getStoredPaths(dir);
-			if (storedPaths == null || newVal < storedPaths.get(0).value()) {
-				grid.get(newP).clearPaths(dir);
-				for (final Path curPath : curPaths) {
-					grid.get(newP).addPath(dir, new Path(curPath, newP, newVal));
+			if (storedPaths == null || newVal <= storedPaths.get(0).value()) {
+				if (storedPaths == null || newVal < storedPaths.get(0).value()) {
+					grid.get(newP).clearPaths(dir);
+					attempts.add(new Attempt(newP, dir));
 				}
-				attempts.add(new Attempt(newP, dir));
-			} else if (newVal == storedPaths.get(0).value()) {
 				for (final Path curPath : curPaths) {
-					grid.get(newP).addPath(dir, new Path(curPath, newP, newVal));
+					grid.get(newP).addPath(dir, new Path(newVal, curPath, newP));
 				}
 			}
 		}
+		return attempts;
 	}
 
 	private static Input buildGrid(final List<String> lines) {

@@ -1,6 +1,6 @@
 package nl.jessebrand.aoc;
 
-public record Point(int x, int y) implements HasLocation {
+public record Point(int x, int y) implements HasLocation, Comparable<Point> {
 	
 	public Point add(int x, int y) {
 		return new Point(x() + x, y() + y);
@@ -13,5 +13,13 @@ public record Point(int x, int y) implements HasLocation {
 	@Override
 	public String toString() {
 		return String.format("Point[%d,%d]", x(), y());
+	}
+
+	@Override
+	public int compareTo(final Point p2) {
+		if (y() != p2.y()) {
+			return Integer.compare(y(), p2.y());
+		}
+		return Integer.compare(x(), p2.x());
 	}
 }

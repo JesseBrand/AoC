@@ -1,6 +1,10 @@
 package nl.jessebrand.aoc;
 
-public final class Grid<T> {
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.stream.IntStream;
+
+public final class Grid<T> implements Iterable<Point> {
 
 	private final Object[][] values;
 	private final String separator;
@@ -85,7 +89,8 @@ public final class Grid<T> {
 		final StringBuilder sb = new StringBuilder();
 		for (int y = 0; y < getHeight(); y++) {
 			for (int x = 0; x < getWidth(); x++) {
-				sb.append(get(x, y) + separator);
+				final T o = get(x, y);
+				sb.append(o instanceof Boolean ? o == Boolean.TRUE ? "#" : "." : o + separator);
 			}
 			sb.append("\n");
 		}
@@ -101,5 +106,12 @@ public final class Grid<T> {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public Iterator<Point> iterator() {
+		return IntStream.range(0, getHeight()).mapToObj(y -> {
+			return IntStream.range(0, getWidth()).mapToObj(x -> new Point(x, y)).toList();
+		}).flatMap(Collection::stream).toList().iterator();
 	}
 }

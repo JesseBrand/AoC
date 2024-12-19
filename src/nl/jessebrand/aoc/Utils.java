@@ -1,5 +1,7 @@
 package nl.jessebrand.aoc;
 
+import static nl.jessebrand.aoc.Utils.manhDistance;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -11,9 +13,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,23 +29,25 @@ import javax.swing.JPanel;
 
 public class Utils {
 
-	public static final Comparator<? super Point> POINT_COMPARATOR = new Comparator<Point>() {
+	private static class AStarComparator implements Comparator<Path> {
 
-		@Override
-		public int compare(Point p1, Point p2) {
-			if (p1 == p2) {
-				return 0;
-			}
-			if (p1.y() != p2.y()) {
-				return p1.y() - p2.y();
-			}
-			if (p1.x() != p2.x()) {
-				return p1.x() - p2.x();
-			}
-			return 0;
+		private final Point target;
+
+		public AStarComparator(final Point target) {
+			this.target = target;
 		}
-    	
-    };
+		
+		@Override
+		public int compare(final Path p1, final Path p2) {
+			int mh1 = p1.length() + manhDistance(p1.last(), target);
+			int mh2 = p2.length() + manhDistance(p2.last(), target);
+			if (mh1 != mh2) {
+				return Integer.compare(mh1, mh2);
+			}
+			return p1.last().compareTo(p2.last());
+		}
+		
+	}
 
 	public static String glue(String sep, List<?> values) {
         StringBuilder sb = new StringBuilder();
@@ -539,6 +546,29 @@ public class Utils {
 				new Point(p.x() + 1, p.y()),
 				new Point(p.x(), p.y() + 1),
 				new Point(p.x() - 1, p.y()));
+	}
+
+	public static Path solveAStar(final Grid<Boolean> grid, final Point start, final Point end) {
+		final Set<Path> next = new TreeSet<>(new AStarComparator(end));
+		final Map<Point, Path> register = new HashMap<>();
+		final Path startPath = new Path(start);
+		next.add(startPath);
+		register.put(start, startPath);
+		while (!next.isEmpty()) {
+			final Path evalPath = next.iterator().next();
+			final Point evalPoint = evalPath.last();
+//			out("eval %s", evalPoint);
+			if (evalPoint.equals(end)) {
+				return evalPath;
+			}
+			getNeighbours(evalPoint).stream().filter(grid::contains).filter(p -> !grid.get(p)).filter(p -> !register.containsKey(p)).forEach(p -> {
+				final Path nextPath = new Path(evalPath, p);
+				next.add(nextPath);
+				register.put(p, nextPath);
+			});
+			next.remove(evalPath);
+		}
+		return null;
 	}
 
 	public static JFrame visualize(final String title, final int contentWidth, final int contentHeight, final Consumer<Graphics> renderer) {

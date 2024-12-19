@@ -80,7 +80,7 @@ public class D12 {
 				boolean isNew = false;
 				if (i == -1) {
 					i = nextIndex;
-					areas.put(i, new TreeSet<>(Utils.POINT_COMPARATOR));
+					areas.put(i, new TreeSet<>());
 					areas.get(i).add(p);
 					isNew = true;
 					nextIndex++;

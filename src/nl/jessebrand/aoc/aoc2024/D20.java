@@ -19,13 +19,11 @@ import nl.jessebrand.aoc.Point;
 public class D20 {
 
 	public static void main(String[] args) throws IOException {
-
 		out("E1 (calc): %d", calcAllCheats("2024/d20ex", 2, 2).size()); // 44
 		out("E2 (calc): %d", calcAllCheats("2024/d20ex", 20, 50).size()); // 285
 		
 		out("1 (calc): %d", calcAllCheats("2024/d20", 2, 100).size()); // 1502
-		
-		out("2 (calc): %d", calcAllCheats("2024/d20", 20, 100).size());
+		out("2 (calc): %d", calcAllCheats("2024/d20", 20, 100).size()); // 1028136
 	}
 
 	private static List<Point> calcAllCheats(final String filename, final int shortcutLength, final int minLength) throws IOException {
@@ -71,7 +69,7 @@ public class D20 {
 		final int origLength = solveAStar(grid, start, end).length();
 		out(origLength);
 		for (final Point p : grid) {
-			if (qualifiesForCheat(grid, p)) {
+			if (pointQualifiesForCheat(grid, p)) {
 				grid.set(p, false);
 				final int newLength = solveAStar(grid, start, end).length();
 				grid.set(p, true);
@@ -84,7 +82,7 @@ public class D20 {
 		return cheats;
 	}
 
-	private static boolean qualifiesForCheat(final Grid<Boolean> grid, final Point p) {
+	private static boolean pointQualifiesForCheat(final Grid<Boolean> grid, final Point p) {
 		// where is now wall and at least 2 open neighbours
 		return grid.get(p) && getNeighbours(p).stream().filter(p2 -> !grid.getOr(p2, true)).count() > 1;
 	}

@@ -13,7 +13,7 @@ public class D19 {
 	
 	private static int current = 0;
 	private static int total = 0;
-	
+
 	private static Map<String, Long> CACHE = new HashMap<>();
 
 	public static void main(String[] args) throws IOException {
@@ -45,7 +45,7 @@ public class D19 {
 			sum += checkPossible(design.substring(a.length()), available, false);
 		}
 		if (outer) {
-			out("%d/%d %s: %d", current++, total, design, sum);
+			out("%d/%d %s: %d", ++current, total, design, sum);
 		}
 		CACHE.put(design, sum);
 		return sum;

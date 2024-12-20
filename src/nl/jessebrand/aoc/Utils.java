@@ -1,6 +1,7 @@
 package nl.jessebrand.aoc;
 
 import static nl.jessebrand.aoc.Utils.manhDistance;
+import static nl.jessebrand.aoc.Utils.visualize;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -541,11 +542,15 @@ public class Utils {
 	}
 
 	public static List<Point> getNeighbours(final Point p) {
+		return getNeighbours(p.x(), p.y());
+	}
+
+	public static List<Point> getNeighbours(final int x, final int y) {
 		return Arrays.asList(
-				new Point(p.x(), p.y() - 1),
-				new Point(p.x() + 1, p.y()),
-				new Point(p.x(), p.y() + 1),
-				new Point(p.x() - 1, p.y()));
+				new Point(x, y - 1),
+				new Point(x + 1, y),
+				new Point(x, y + 1),
+				new Point(x - 1, y));
 	}
 
 	public static Path solveAStar(final Grid<Boolean> grid, final Point start, final Point end) {
@@ -590,6 +595,11 @@ public class Utils {
 	public static void visualize(final String title, final int contentWidth, final int contentHeight, final Consumer<Graphics> renderer, Consumer<Integer> processor, final long msPerFrame) {
 		final JFrame frame = visualize(title, contentWidth, contentHeight, renderer);
 		new Thread(new VisualiseRunner(frame, processor, msPerFrame)).start();
+	}
+
+	public static void visualizeAStar(final String title, final Grid<Boolean> grid, final Path path, final int scale) {
+		final AStarRenderer renderer = new AStarRenderer(grid, path, scale);
+		visualize(title, grid.getWidth() * scale, grid.getHeight() * scale, renderer::render);
 	}
 
 	private static class RenderPanel extends JPanel {

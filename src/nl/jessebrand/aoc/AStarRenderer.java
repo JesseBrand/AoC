@@ -25,7 +25,13 @@ public final class AStarRenderer {
 			g.fillRect(p.x() * scale, p.y() * scale, scale, scale);
 		}
 		for (final Point p : path) {
-			g.setColor(Color.YELLOW);
+			if (p == path.first()) {
+				g.setColor(Color.BLUE);
+			} else if (p == path.last()) {
+				g.setColor(Color.RED);
+			} else {
+				g.setColor(Color.YELLOW);
+			}
 			g.fillOval(p.x() * scale, p.y() * scale, scale, scale);
 			g.setColor(Color.BLACK);
 			g.drawOval(p.x() * scale, p.y() * scale, scale, scale);

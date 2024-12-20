@@ -19,11 +19,15 @@ public record Path(List<Point> points) implements Iterable<Point> {
 	}
 
 	public final Point last() {
-		return points().get(length() - 1);
+		return points().get(length());
 	}
 
 	public final int length() {
-		return points().size();
+		return points().size() - 1;
+	}
+	
+	public final Point get(final int index) {
+		return points().get(index);
 	}
 
 	@Override

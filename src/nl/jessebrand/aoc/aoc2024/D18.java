@@ -4,12 +4,11 @@ import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.parsePoints;
 import static nl.jessebrand.aoc.Utils.readFile;
 import static nl.jessebrand.aoc.Utils.solveAStar;
-import static nl.jessebrand.aoc.Utils.visualize;
+import static nl.jessebrand.aoc.Utils.visualizeAStar;
 
 import java.io.IOException;
 import java.util.List;
 
-import nl.jessebrand.aoc.AStarRenderer;
 import nl.jessebrand.aoc.Grid;
 import nl.jessebrand.aoc.Path;
 import nl.jessebrand.aoc.Point;
@@ -37,9 +36,8 @@ public class D18 {
 		points.stream().limit(limit).forEach(p -> grid.set(p, true));
 //		out(grid);
 		final Path path = solveAStar(grid, start, end);
-		out("1: %d", path.length() - 1);
-		final AStarRenderer renderer = new AStarRenderer(grid, path, SCALE);
-		visualize(title, grid.getWidth() * SCALE, grid.getHeight() * SCALE, renderer::render);
+		out("1: %d", path.length());
+		visualizeAStar(title, grid, path, SCALE);
 	}
 
 	private static void solve2(final Grid<Boolean> grid, final List<Point> points, final String title) {

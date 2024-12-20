@@ -2,6 +2,7 @@ package nl.jessebrand.aoc;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public final class Grid<T> implements Iterable<Point> {
@@ -99,13 +100,7 @@ public final class Grid<T> implements Iterable<Point> {
 	
 	@Override
 	public final Grid<T> clone() {
-		final Grid<T> result = new Grid<T>(getWidth(), getHeight(), separator);
-		for (int y = 0; y < getHeight(); y++) {
-			for (int x = 0; x < getWidth(); x++) {
-				result.set(x, y, get(x, y));
-			}
-		}
-		return result;
+		return convert(o -> o);
 	}
 
 	@Override
@@ -113,5 +108,16 @@ public final class Grid<T> implements Iterable<Point> {
 		return IntStream.range(0, getHeight()).mapToObj(y -> {
 			return IntStream.range(0, getWidth()).mapToObj(x -> new Point(x, y)).toList();
 		}).flatMap(Collection::stream).toList().iterator();
+	}
+
+	public <T2> Grid<T2> convert(Function<T, T2> mapper) {
+		final Grid<T2> result = new Grid<>(getWidth(), getHeight(), separator);
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
+				final T curValue = get(x, y);
+				result.set(x, y, mapper.apply(curValue));
+			}
+		}
+		return result;
 	}
 }

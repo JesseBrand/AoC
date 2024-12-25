@@ -15,9 +15,14 @@ public class D25 {
 		solve("2024/d25ex");
 	}
 	
-	private static record Combination(boolean key, int[] lengths) {
+	private enum CombinationType {
+		KEY,
+		LOCK;
+	}
+	
+	private static record Combination(CombinationType type, int[] lengths) {
 		public String toString() {
-			return String.format("%s[%s]", key ? "KEY" : "LCK", glue(",", lengths));
+			return String.format("%s[%s]", type, glue(",", lengths));
 		}
 	}
 	
@@ -27,8 +32,8 @@ public class D25 {
 		for (int i = 0; i < lines.size(); i += 8) {
 			combos.add(parseCombination(lines.subList(i, i + 7)));
 		}
-		final List<Combination> locks = combos.stream().filter(c -> !c.key()).toList();
-		final List<Combination> keys = combos.stream().filter(c -> c.key()).toList();
+		final List<Combination> locks = combos.stream().filter(c -> c.type() == CombinationType.LOCK).toList();
+		final List<Combination> keys = combos.stream().filter(c -> c.type() == CombinationType.KEY).toList();
 		out("1: %d", locks.stream().mapToLong(l -> {
 			return keys.stream().filter(k -> fits(l, k)).count();
 		}).sum());
@@ -44,18 +49,22 @@ public class D25 {
 	}
 
 	private static Combination parseCombination(final List<String> list) {
-		final List<String> subList = list.subList(1, 6); 
-		int[] lengths = IntStream.range(0, 5).map(i -> {
-			return (int) subList.stream().map(s -> s.charAt(i)).filter(c -> c == '#').count();
-		}).toArray();
+		return new Combination(parseType(list), parseTumblers(list));
+	}
+
+	private static CombinationType parseType(final List<String> list) {
 		if (list.get(0).equals(".....") && list.get(6).equals("#####")) {
-			// key
-			return new Combination(true, lengths);
+			return CombinationType.KEY;
 		}
 		if (list.get(0).equals("#####") && list.get(6).equals(".....")) {
-			// lock
-			return new Combination(false, lengths);
+			return CombinationType.LOCK;
 		}
 		throw new IllegalStateException("" + list);
+	}
+		
+	private static int[] parseTumblers(final List<String> list) {
+		return IntStream.range(0, 5).map(i -> {
+			return (int) list.subList(1, 6).stream().map(s -> s.charAt(i)).filter(c -> c == '#').count();
+		}).toArray();
 	}
 }

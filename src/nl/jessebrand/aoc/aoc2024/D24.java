@@ -16,30 +16,21 @@ import java.util.function.BiPredicate;
 
 public class D24 {
 
-	public static void main(String[] args) throws IOException {
-//		execute("2024/d24ex");
-//		execute("2024/d24");
-//		execute2("2024/d24ex2");
-		execute2("2024/d24");
-	}
-
 	private static enum Operator {
 		AND((a, b) -> a && b),
 		OR((a, b) -> a || b),
 		XOR((a, b) -> a ^ b);
 		
-		private BiPredicate<Boolean, Boolean> p;
+		private final BiPredicate<Boolean, Boolean> p;
 
-		Operator(BiPredicate<Boolean, Boolean> p) {
+		Operator(final BiPredicate<Boolean, Boolean> p) {
 			this.p = p;
-			
 		}
 
 		final boolean eval(boolean a, boolean b) {
 			return p.test(a, b);
 		}
 	}
-
 	
 	private static record Gate(String key1, String key2, Operator op, String keyOut) {
 		@Override
@@ -57,13 +48,22 @@ public class D24 {
 			return new ArrayList<>(gates);
 		}
 	}
+
+	public static void main(String[] args) throws IOException {
+//		execute("2024/d24ex");
+		execute("2024/d24");
+//		execute2("2024/d24ex2");
+		execute2("2024/d24");
+	}
+
 	
 	private static void execute2(final String file) throws IOException {
-		Map<String, String> switches = new HashMap<>();
+		final Map<String, String> switches = new HashMap<>();
 		addSwitch(switches, "z14", "hbk");
 		addSwitch(switches, "z18", "kvn");
 		addSwitch(switches, "z23", "dbb");
 		addSwitch(switches, "cvh", "tfn");
+
 		final Input in = readInput(file, switches);
 		for (int i = 0; ; i++) {
 			final List<Gate> gates = in.gates();
@@ -78,8 +78,6 @@ public class D24 {
 				out("%s exp: %s", key, expected);
 				out("%s act: %s", key, actual);
 				out(key + " seems inconsistent");
-//			} else {
-//				out(key + " seems okay");
 			}
 //			outputTree(gates, gate);
 		}
@@ -91,39 +89,18 @@ public class D24 {
 		switches.put(s2, s1);
 	}
 
-	private static String expected(String key, Operator op1, Operator op2) {
-		String iKey = key.substring(1);
-		String form = String.format("(x%s %s y%s)", iKey, op1, iKey);
+	private static String expected(final String key, final Operator opInner, final Operator opOuter) {
+		final String iKey = key.substring(1);
+		String form = String.format("(x%s %s y%s)", iKey, opInner, iKey);
 		if (iKey.equals("00")) {
 			return form;
 		}
-		int parent = Integer.parseInt(iKey) - 1;
-		String sParent = (parent > 9 ? "" : "0") + parent;
+		final int parent = Integer.parseInt(iKey) - 1;
+		final String sParent = (parent > 9 ? "" : "0") + parent;
 		if (parent > 0) {
-			return String.format("((%s OR (x%s AND y%s)) %s %s)", expected("z" + sParent, Operator.XOR, Operator.AND), sParent, sParent, op2, form);
+			return String.format("((%s OR (x%s AND y%s)) %s %s)", expected("z" + sParent, Operator.XOR, Operator.AND), sParent, sParent, opOuter, form);
 		}
-		return String.format("(%s %s %s)", expected("z" + sParent, Operator.AND, Operator.AND), op2, form);
-	}
-
-	private static boolean seemsInconsistent(final List<Gate> gates, final Gate gate, final String key) {
-		final String key1 = gate.key1();
-		if (isInput(key1)) {
-			if (Integer.parseInt(key1.substring(1)) > Integer.parseInt(key.substring(1))) {
-//				out("here %s %s", key1.substring(1), key.substring(1));
-				return true;
-			}
-		} else if (seemsInconsistent(gates, getGate(gates, key1), key)) {
-			return true;
-		}
-		final String key2 = gate.key2();
-		if (isInput(key2)) {
-			if (Integer.parseInt(key2.substring(1)) > Integer.parseInt(key.substring(1))) {
-				return true;
-			}
-		} else if (seemsInconsistent(gates, getGate(gates, key2), key)) {
-			return true;
-		}
-		return false;
+		return String.format("(%s %s %s)", expected("z" + sParent, Operator.AND, Operator.AND), opOuter, form);
 	}
 
 	private static String flatToString(final List<Gate> gates, final Gate gate) {
@@ -151,7 +128,7 @@ public class D24 {
 		out();
 	}
 
-	private static int getDepth(List<Gate> gates, Gate gate) {
+	private static int getDepth(final List<Gate> gates, final Gate gate) {
 		final String key1 = gate.key1();
 		final int depth1 = isInput(key1) ? 0 : getDepth(gates, getGate(gates, key1));
 		final String key2 = gate.key2();
@@ -196,7 +173,7 @@ public class D24 {
 		out("1: %d", parseNumber(values, "z")); // 58740594706150
 	}
 
-	private static Input readInput(String file) throws IOException {
+	private static Input readInput(final String file) throws IOException {
 		return readInput(file, Collections.emptyMap());
 	}
 

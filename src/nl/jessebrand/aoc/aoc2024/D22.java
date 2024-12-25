@@ -14,6 +14,16 @@ import nl.jessebrand.aoc.Utils;
 
 public class D22 {
 
+	private static record Combination(int i0, int i1, int i2, int i3) {
+		public int[] nrs() {
+			return new int[] {i0, i1, i2, i3};
+		}
+		
+		public String toString() {
+			return String.format("%d,%d,%d,%d", i0, i1, i2, i3);
+		}
+	}
+
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2024/d22");
 		final List<List<Long>> list = lines.stream().mapToLong(s -> Long.parseLong(s)).mapToObj(l -> calculate(l, 2000)).toList();
@@ -33,8 +43,8 @@ public class D22 {
 
 		combinations.parallelStream().forEach(c -> map.put(c, lastList.parallelStream().mapToInt(il -> findFirstOccurance(il, c)).sum()));
 		out(map);
-		Entry<Combination, Integer> highest = map.entrySet().stream().reduce((e0, e1) -> e0.getValue() < e1.getValue() ? e1 : e0).get();
-		out("2: %d (%s)", highest.getValue(), highest.getKey());
+		final Combination highest = map.entrySet().stream().reduce((e0, e1) -> e0.getValue() < e1.getValue() ? e1 : e0).map(e -> e.getKey()).get();
+		out("2: %d (%s)", map.get(highest), highest);
 		out("Duration: %ds (%d lines)", (System.currentTimeMillis() - ms) / 1000, lines.size());
 
 //		out("2: %d", combinations.stream().mapToInt(c -> lastList.stream().mapToInt(il -> findFirstOccurance(il, c)).sum()).max().getAsInt());
@@ -44,29 +54,15 @@ public class D22 {
 	
 	private static int findFirstOccurance(final List<Integer> secrets, final Combination c) {
 		for (int i = 0; i < secrets.size() - 4; i++) {
-			final int i0 = secrets.get(i);
-			final int i1 = secrets.get(i + 1);
-			final int i2 = secrets.get(i + 2);
-			final int i3 = secrets.get(i + 3);
-			final int i4 = secrets.get(i + 4);
-			if (i1 - i0 == c.i0()
-					&& i2 - i1 == c.i1()
-					&& i3 - i2 == c.i2()
-					&& i4 - i3 == c.i3()) {
-				return i4;
+			final int[] is = {secrets.get(i), secrets.get(i + 1), secrets.get(i + 2), secrets.get(i + 3), secrets.get(i + 4)};
+			if (is[1] - is[0] == c.i0()
+					&& is[2] - is[1] == c.i1()
+					&& is[3] - is[2] == c.i2()
+					&& is[4] - is[3] == c.i3()) {
+				return is[4];
 			}
 		}
 		return 0;
-	}
-
-	private static record Combination(int i0, int i1, int i2, int i3) {
-		public int[] nrs() {
-			return new int[] {i0, i1, i2, i3};
-		}
-		
-		public String toString() {
-			return String.format("%d,%d,%d,%d", i0, i1, i2, i3);
-		}
 	}
 
 	private static List<Combination> gatherCombinations() {
@@ -100,11 +96,11 @@ public class D22 {
 		return result;
 	}
 
-	private static long prune(long l) {
+	private static long prune(final long l) {
 		return l % 16777216;
 	}
 
-	private static long mix(long l1, long l2) {
+	private static long mix(final long l1, final long l2) {
 		return l1 ^ l2;
 	}
 
@@ -121,4 +117,4 @@ public class D22 {
 	}
 }
 
-// 2087 too low
+// 2089

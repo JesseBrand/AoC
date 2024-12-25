@@ -61,7 +61,18 @@ public class Utils {
         return sb.toString();
     }
 
-    public static String glue(String sep, long[] values) {
+	public static String glue(String sep, int[] values) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0) {
+				sb.append(sep);
+			}
+			sb.append(values[i]);
+		}
+		return sb.toString();
+	}
+
+	public static String glue(String sep, long[] values) {
     	StringBuilder sb = new StringBuilder();
     	for (int i = 0; i < values.length; i++) {
     		if (i > 0) {
@@ -73,11 +84,25 @@ public class Utils {
     }
 
     public static String repeatChar(char c, int amount) {
+    	if (amount < 0) {
+    		throw new IllegalArgumentException("Cannot repeat " + amount + " times!");
+    	}
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < amount; i++) {
             sb.append(c);
         }
         return sb.toString();
+    }
+
+    public static String repeatString(String s, int amount) {
+    	if (amount < 0) {
+    		throw new IllegalArgumentException("Cannot repeat " + amount + " times!");
+    	}
+    	StringBuilder sb = new StringBuilder();
+    	for (int i = 0; i < amount; i++) {
+    		sb.append(s);
+    	}
+    	return sb.toString();
     }
     
     public static Point parsePoint(final String s) {

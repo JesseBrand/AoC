@@ -13,16 +13,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import nl.jessebrand.aoc.Triple;
 import nl.jessebrand.aoc.Tuple;
 
 public class D23 {
-
-	public record Triple<T>(T l1, T l2, T l3) {
-		@Override
-		public String toString() {
-			return String.format("%s-%s-%s", l1, l2, l3);
-		}
-	}
 
 	public static void main(String[] args) throws IOException {
 		final List<String> lines = readFile("2024/d23");
@@ -46,26 +40,21 @@ public class D23 {
 	private static Collection<List<String>> findAllContaining(final List<Tuple<String>> pairs, final List<String> values) {
 		final Set<List<String>> result = new HashSet<>();
 		for (final Tuple<String> pair : pairs) {
-			String l1 = pair.l1();
-			String l2 = pair.l2();
+			final String l1 = pair.l1();
+			final String l2 = pair.l2();
 			if (l1 != values.get(0)) {
 				continue;
 			}
 			if (values.contains(l2)) {
 				continue;
 			}
-			boolean match = true;
-			for (final String value : values) {
-				if (!contains(pairs, value, l2)) {
-					match = false;
-				}
-			}
-			if (match) {
-				final List<String> newList = new ArrayList<>(values);
-				newList.add(l2);
-				result.add(newList);
-				result.addAll(findAllContaining(pairs, newList));
-			}
+			if (!values.stream().allMatch(v -> contains(pairs, v, l2))) {
+				continue;
+			};
+			final List<String> newList = new ArrayList<>(values);
+			newList.add(l2);
+			result.add(newList);
+			result.addAll(findAllContaining(pairs, newList));
 		}
 		return result;
 	}
@@ -76,7 +65,7 @@ public class D23 {
 		return new Tuple<>(split.get(0).intern(), split.get(1).intern());
 	}
 
-	private static List<Triple<String>> findTriplets(List<Tuple<String>> pairs) {
+	private static List<Triple<String>> findTriplets(final List<Tuple<String>> pairs) {
 		final List<Triple<String>> result = new ArrayList<>();
 		for (final Tuple<String> pair1 : pairs) {
 			final String s0 = pair1.l1();
@@ -94,7 +83,7 @@ public class D23 {
 		return result;
 	}
 
-	private static boolean contains(List<Tuple<String>> tuples, String s0, String s1) {
+	private static boolean contains(final List<Tuple<String>> tuples, final String s0, final String s1) {
 		for (final Tuple<String> tuple : tuples) {
 			if (tuple.l1() == s0 && tuple.l2() == s1) {
 				return true;
@@ -103,7 +92,7 @@ public class D23 {
 		return false;
 	}
 
-	private static boolean contains(List<Triple<String>> triples, String s0, String s1, String s2) {
+	private static boolean contains(final List<Triple<String>> triples, final String s0, final String s1, final String s2) {
 		for (final Triple<String> triple : triples) {
 			if (triple.l1() == s0 && triple.l2() == s1 && triple.l3() == s2) {
 				return true;
@@ -111,5 +100,4 @@ public class D23 {
 		}
 		return false;
 	}
-
 }

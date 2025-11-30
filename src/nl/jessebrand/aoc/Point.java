@@ -2,11 +2,11 @@ package nl.jessebrand.aoc;
 
 public record Point(int x, int y) implements HasLocation, Comparable<Point> {
 	
-	public Point add(int x, int y) {
+	public Point add(final int x, final int y) {
 		return new Point(x() + x, y() + y);
 	}
 
-	public Point add(Point p2) {
+	public Point add(final Point p2) {
 		return add(p2.x(), p2.y());
 	}
 	

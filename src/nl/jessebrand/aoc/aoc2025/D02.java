@@ -1,6 +1,6 @@
 package nl.jessebrand.aoc.aoc2025;
 
-import static nl.jessebrand.aoc.Utils.out;
+import static nl.jessebrand.aoc.Utils.*;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
@@ -14,16 +14,13 @@ public class D02 {
 		solve("2025/d02");
 	}
 	private static final void solve(final String file) throws IOException {
-		final List<String> entries = Arrays.asList(readFile(file).get(0).split(","));
+		final List<List<Long>> entries = parseLongsFromStrings(readFile(file).get(0), ",", "-");
 		out(entries);
 		long totalA = 0;
 		long totalB = 0;
-		for (final String entry : entries) {
-			String[] split = entry.split("-");
-			long min = Long.parseLong(split[0]);
-			long max = Long.parseLong(split[1]);
-//			out("%d-%d", min, max);
-			for (long i = min; i <= max; i++) {
+		for (final List<Long> entry : entries) {
+//			out("%d-%d", entry.get(0), entry.get(1));
+			for (long i = entry.get(0); i <= entry.get(1); i++) {
 				if (!isValidA("" + i)) {
 					totalA += i;
 				}
@@ -48,10 +45,6 @@ public class D02 {
 		return true;
 	}
 
-	private static boolean matches(final String s, final int pos, final String sub) {
-		return s.substring(pos, pos + sub.length()).equals(sub);
-	}
-
 	private static boolean isValidB(String s) {
 		for (int len = 1; len < s.length() / 2 + 1; len++) {
 			if (s.length() % len != 0) {
@@ -74,8 +67,11 @@ public class D02 {
 		return true;
 	}
 
+	private static boolean matches(final String s, final int pos, final String sub) {
+		return s.substring(pos, pos + sub.length()).equals(sub);
+	}
+
 }
 
-// 31000885834 wrong
 // 31000881061
 // 46769308485

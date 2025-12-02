@@ -379,21 +379,8 @@ public class Utils {
 	}
 
 	public static List<Integer> parseIntsFromString(final String string, final String separator) {
-		final List<Integer> result = new ArrayList<>();
-		for (String s : string.trim().split(separator)) {
-			result.add(Integer.parseInt(s.trim()));
-		}
-		return result;
+		return Arrays.stream(string.trim().split(separator)).map(Integer::parseInt).toList();
 	}
-
-	public static List<Long> parseLongsFromString(final String string, final String separator) {
-		final List<Long> result = new ArrayList<>();
-		for (String s : string.trim().split(separator)) {
-			result.add(Long.parseLong(s.trim()));
-		}
-		return result;
-	}
-
 	public static List<List<Integer>> parseIntsFromStrings(final List<String> strings) {
 		return parseIntsFromStrings(strings, ",");
 	}
@@ -402,12 +389,30 @@ public class Utils {
 		return strings.stream().map(l -> parseIntsFromString(l, separator)).toList();
 	}
 
+	/**
+	 * Standard parse using whitespace as separator.
+	 */
 	public static List<Long> parseLongsFromString(final String string) {
-		final List<Long> result = new ArrayList<>();
-		for (String s : string.trim().split("\s+")) {
-			result.add(Long.parseLong(s.trim()));
-		}
-		return result;
+		return parseLongsFromString(string, "\s+");
+	}
+
+	public static List<Long> parseLongsFromString(final String string, final String separator) {
+		return Arrays.stream(string.trim().split(separator)).map(Long::parseLong).toList();
+	}
+
+	public static List<List<Long>> parseLongsFromStrings(final List<String> strings) {
+		return parseLongsFromStrings(strings, ",");
+	}
+
+	public static List<List<Long>> parseLongsFromStrings(final List<String> strings, final String separator) {
+		return strings.stream().map(l -> parseLongsFromString(l, separator)).toList();
+	}
+
+	/**
+	 * Separate string on separator1, then handle each as a set using separator2 to split further.
+	 */
+	public static List<List<Long>> parseLongsFromStrings(final String string, final String separator1, final String separator2) {
+		return parseLongsFromStrings(Arrays.asList(string.split(separator1)), separator2);
 	}
 
 	public static double[] quadraticFormula(int a, long b, long c) {

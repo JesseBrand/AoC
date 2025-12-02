@@ -1,10 +1,10 @@
 package nl.jessebrand.aoc.aoc2025;
 
-import static nl.jessebrand.aoc.Utils.*;
+import static nl.jessebrand.aoc.Utils.out;
+import static nl.jessebrand.aoc.Utils.parseLongsFromStrings;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class D02 {

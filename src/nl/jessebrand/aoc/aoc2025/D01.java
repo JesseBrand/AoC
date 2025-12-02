@@ -1,21 +1,19 @@
 package nl.jessebrand.aoc.aoc2025;
 
-import static nl.jessebrand.aoc.Utils.*;
-import static nl.jessebrand.aoc.Utils.parseColumnsAsInts;
+import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class D01 {
 
 	public static void main(final String[] args) throws IOException {
-		run("2025/d01ex");
-		run("2025/d01");
+		solve("2025/d01ex");
+		solve("2025/d01");
 	}
 
-	private static void run(final String file) throws IOException {
+	private static void solve(final String file) throws IOException {
 		final List<String> lines = readFile(file);
 		out(lines);
 		

@@ -32,56 +32,44 @@ public class D02 {
 				}
 			}
 		}
-		out("1: %d\n", totalA);
-		out("2: %d\n", totalB);
+		out("1: %d", totalA);
+		out("2: %d", totalB);
 	}
 
 	private static boolean isValidA(String s) {
-			int len = s.length() / 2;
-			if (len == 0 || s.length() % len != 0 || s.length() % 2 != 0) {
-				return true;
-			}
-			String sub = s.substring(0, len);
-//			out("check: %s (%s)", s, sub);
-			boolean good = false;
-			for (int j = 0; j < s.length(); j += len) {
-				if (!s.substring(j, j + len).equals(sub)) {
-//					out("good: %s (%s, %s)", s, sub, s.substring(j, j + len));
-					good = true;
-					break;
-				}
-			}
-//			good = false;
-			if (!good) {
-//				out("faulty : %s (%s)", s, sub);
-				return false;
-			}
-//			out("false: %s try %s", s, sub);
+		final int len = s.length() / 2;
+		if (len == 0 || s.length() % len != 0 || s.length() % 2 != 0) {
+			return true;
+		}
+		final String sub = s.substring(0, len);
+		if (matches(s, 0, sub) && matches(s, len, sub)) {
+			return false;
+		}
 		return true;
 	}
 
+	private static boolean matches(final String s, final int pos, final String sub) {
+		return s.substring(pos, pos + sub.length()).equals(sub);
+	}
+
 	private static boolean isValidB(String s) {
-		for (int i = 0; i < s.length() / 2; i++) {
-			int len = i + 1;
+		for (int len = 1; len < s.length() / 2 + 1; len++) {
 			if (s.length() % len != 0) {
 				continue;
 			}
-			String sub = s.substring(0, len);
+			final String sub = s.substring(0, len);
 //			out("check: %s (%s)", s, sub);
 			boolean good = false;
 			for (int j = 0; j < s.length(); j += len) {
-				if (!s.substring(j, j + len).equals(sub)) {
-//					out("good: %s (%s, %s)", s, sub, s.substring(j, j + len));
+				if (!matches(s, j, sub)) {
 					good = true;
 					break;
 				}
 			}
-//			good = false;
 			if (!good) {
 //				out("faulty : %s (%s)", s, sub);
 				return false;
 			}
-//			out("false: %s try %s", s, sub);
 		}
 		return true;
 	}

@@ -41,8 +41,8 @@ public class D01 {
 			}
 //			out("%s > %d - %d/%d", instr, r.value, r.a, r.b);
 		}
-		out("1: %d", r1);
-		out("2: %d", r2);
+		out("Part 1: %d", r1);
+		out("Part 2: %d", r2);
 		out();
 	}
 }

@@ -13,6 +13,7 @@ public class D02 {
 		solve("2025/d02ex");
 		solve("2025/d02");
 	}
+
 	private static final void solve(final String file) throws IOException {
 		final List<List<Long>> entries = parseLongsFromStrings(readFile(file).get(0), ",", "-");
 		out(entries);
@@ -29,8 +30,8 @@ public class D02 {
 				}
 			}
 		}
-		out("1: %d", totalA);
-		out("2: %d", totalB);
+		out("Part 1: %d", totalA);
+		out("Part 2: %d", totalB);
 	}
 
 	private static boolean isValidA(String s) {

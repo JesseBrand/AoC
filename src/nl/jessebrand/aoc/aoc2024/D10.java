@@ -2,7 +2,7 @@ package nl.jessebrand.aoc.aoc2024;
 
 import static nl.jessebrand.aoc.Utils.buildIntGrid;
 import static nl.jessebrand.aoc.Utils.findGridPoints;
-import static nl.jessebrand.aoc.Utils.getNeighbours;
+import static nl.jessebrand.aoc.Utils.get4Neighbours;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class D10 {
 	 * returns set of points reachable from p with level i
 	 */
 	private static List<Point> findRoutes(final Point p, final Grid<Integer> grid, final int i, final int max) {
-		final List<Point> nextPoints = getNeighbours(p).stream().filter(grid::contains).filter(p1 -> grid.get(p1) == i).toList();
+		final List<Point> nextPoints = get4Neighbours(p).stream().filter(grid::contains).filter(p1 -> grid.get(p1) == i).toList();
 		if (i == max) {
 			return nextPoints;
 		}

@@ -4,10 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public final class Grid<T> implements Iterable<Point> {
 
-	private final Object[][] values;
+	private final T[][] values;
 	private final String separator;
 
 	public Grid(int width, int height) {
@@ -20,7 +21,7 @@ public final class Grid<T> implements Iterable<Point> {
 	}
 
 	public Grid(int width, int height, String separator) {
-		values = new Object[height][width];
+		values = (T[][]) new Object[height][width];
 		this.separator = separator;
 	}
 
@@ -102,12 +103,16 @@ public final class Grid<T> implements Iterable<Point> {
 	public final Grid<T> clone() {
 		return convert(o -> o);
 	}
+	
+	public final Stream<Point> stream() {
+		return IntStream.range(0, getHeight()).mapToObj(y -> {
+			return IntStream.range(0, getWidth()).mapToObj(x -> new Point(x, y)).toList();
+		}).flatMap(Collection::stream);
+	}
 
 	@Override
 	public Iterator<Point> iterator() {
-		return IntStream.range(0, getHeight()).mapToObj(y -> {
-			return IntStream.range(0, getWidth()).mapToObj(x -> new Point(x, y)).toList();
-		}).flatMap(Collection::stream).toList().iterator();
+		return stream().toList().iterator();
 	}
 
 	public <T2> Grid<T2> convert(Function<T, T2> mapper) {

@@ -1,11 +1,11 @@
 package nl.jessebrand.aoc.aoc2025;
 
 import static nl.jessebrand.aoc.Utils.buildCharGrid;
+import static nl.jessebrand.aoc.Utils.get8Neighbours;
 import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import nl.jessebrand.aoc.Grid;
@@ -20,58 +20,36 @@ public class D04 {
 
 	private static void solve(final String file) throws IOException {
 		final List<String> lines = readFile(file);
-//		out(lines);
-		Grid<Character> grid = buildCharGrid(lines);
+		final Grid<Character> grid = buildCharGrid(lines);
 		out(grid);
-		int totalA = gatherMoveable(grid).size();
-		
-		out("Part 1: %d", totalA);
+
+		out("Part 1: %d", gatherMoveable(grid).size());
 
 		int totalB = 0;
-		List<Point> list;
 		while (true) {
-			list = gatherMoveable(grid);
+			final List<Point> list = gatherMoveable(grid);
 			if (list.isEmpty()) {
 				break;
 			}
-			for (final Point p : list) {
-				grid.set(p, '.');
-			}
+			list.stream().forEach(p -> grid.set(p, '.'));
 			totalB += list.size();
 		}
+//		out(grid);
 		out("Part 2: %d", totalB);
 	}
 
-	private static List<Point> gatherMoveable(Grid<Character> grid) {
-		final List<Point> result = new ArrayList<>();
-		for (int y = 0; y < grid.getHeight(); y++) {
-			for (int x = 0; x < grid.getWidth(); x++) {
-				if (isMoveableRoll(grid, x, y)) {
-					result.add(new Point(x, y));
-				}
-			}
-		}
-		return result;
+	private static List<Point> gatherMoveable(final Grid<Character> grid) {
+		return grid.stream().filter(p -> isMoveableRoll(grid, p)).toList();
 	}
 
-	private static boolean isMoveableRoll(Grid<Character> grid, int x, int y) {
-		if (grid.get(x, y) != '@') {
+	private static boolean isMoveableRoll(final Grid<Character> grid, final Point p) {
+		if (grid.get(p) != '@') {
 			return false;
 		}
-		int result =
-				(isRoll(grid, x - 1, y - 1) ? 1 : 0)
-				+ (isRoll(grid, x, y - 1) ? 1 : 0)
-				+ (isRoll(grid, x + 1, y - 1) ? 1 : 0)
-				+ (isRoll(grid, x - 1, y) ? 1 : 0)
-				+ (isRoll(grid, x + 1, y) ? 1 : 0)
-				+ (isRoll(grid, x - 1, y + 1) ? 1 : 0)
-				+ (isRoll(grid, x, y + 1) ? 1 : 0)
-				+ (isRoll(grid, x + 1, y + 1) ? 1 : 0);
+		final int result = (int) get8Neighbours(p).stream().filter(n -> grid.getOr(n, '.') == '@').count();
 		return result < 4;
 	}
-
-	private static boolean isRoll(Grid<Character> grid, int x, int y) {
-		return x >= 0 && y >= 0 && x < grid.getWidth() && y < grid.getHeight() && grid.get(x, y) == '@'; 
-	}
-
 }
+
+// 1435
+// 8623

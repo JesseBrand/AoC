@@ -571,16 +571,32 @@ public class Utils {
 		return result;
 	}
 
-	public static List<Point> getNeighbours(final Point p) {
-		return getNeighbours(p.x(), p.y());
+	public static List<Point> get4Neighbours(final Point p) {
+		return get4Neighbours(p.x(), p.y());
 	}
 
-	public static List<Point> getNeighbours(final int x, final int y) {
+	public static List<Point> get4Neighbours(final int x, final int y) {
 		return Arrays.asList(
 				new Point(x, y - 1),
 				new Point(x + 1, y),
 				new Point(x, y + 1),
 				new Point(x - 1, y));
+	}
+
+	public static List<Point> get8Neighbours(final Point p) {
+		return get8Neighbours(p.x(), p.y());
+	}
+	
+	public static List<Point> get8Neighbours(final int x, final int y) {
+		return Arrays.asList(
+				new Point(x - 1, y - 1),
+				new Point(x, y - 1),
+				new Point(x + 1, y - 1),
+				new Point(x - 1, y),
+				new Point(x + 1, y),
+				new Point(x - 1, y + 1),
+				new Point(x, y + 1),
+				new Point(x + 1, y + 1));
 	}
 
 	public static Path solveAStar(final Grid<Boolean> grid, final Point start, final Point end) {
@@ -596,7 +612,7 @@ public class Utils {
 			if (evalPoint.equals(end)) {
 				return evalPath;
 			}
-			getNeighbours(evalPoint).stream().filter(grid::contains).filter(p -> !grid.get(p)).filter(p -> !register.containsKey(p)).forEach(p -> {
+			get4Neighbours(evalPoint).stream().filter(grid::contains).filter(p -> !grid.get(p)).filter(p -> !register.containsKey(p)).forEach(p -> {
 				final Path nextPath = new Path(evalPath, p);
 				next.add(nextPath);
 				register.put(p, nextPath);

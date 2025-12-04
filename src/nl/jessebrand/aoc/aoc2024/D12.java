@@ -31,7 +31,7 @@ public class D12 {
 		long total2 = 0;
 		for (int i : areas.keySet()) {
 			final Collection<Point> list = areas.get(i);
-			long perimeter1 = list.stream().map(Utils::getNeighbours).flatMap(Collection::stream).filter(p -> !list.contains(p)).count();
+			long perimeter1 = list.stream().map(Utils::get4Neighbours).flatMap(Collection::stream).filter(p -> !list.contains(p)).count();
 			long perimeter2 = countSides(list);
 			out("%d(%c): %d, %d/%d (%s)", i, grid.get(list.iterator().next()), list.size(), perimeter1, perimeter2, list);
 			total1 += areas.get(i).size() * perimeter1;

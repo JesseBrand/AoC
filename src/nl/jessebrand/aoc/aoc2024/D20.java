@@ -2,7 +2,7 @@ package nl.jessebrand.aoc.aoc2024;
 
 import static nl.jessebrand.aoc.Utils.*;
 import static nl.jessebrand.aoc.Utils.findGridPoint;
-import static nl.jessebrand.aoc.Utils.getNeighbours;
+import static nl.jessebrand.aoc.Utils.get4Neighbours;
 import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.readFile;
 import static nl.jessebrand.aoc.Utils.solveAStar;
@@ -84,7 +84,7 @@ public class D20 {
 
 	private static boolean pointQualifiesForCheat(final Grid<Boolean> grid, final Point p) {
 		// where is now wall and at least 2 open neighbours
-		return grid.get(p) && getNeighbours(p).stream().filter(p2 -> !grid.getOr(p2, true)).count() > 1;
+		return grid.get(p) && get4Neighbours(p).stream().filter(p2 -> !grid.getOr(p2, true)).count() > 1;
 	}
 }
 

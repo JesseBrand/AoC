@@ -30,6 +30,10 @@ public record Path(List<Point> points) implements Iterable<Point> {
 		return points().get(index);
 	}
 
+	public final Stream<Point> stream() {
+		return points().stream();
+	}
+
 	@Override
 	public final Iterator<Point> iterator() {
 		return points().iterator();

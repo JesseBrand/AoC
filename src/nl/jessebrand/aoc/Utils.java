@@ -400,8 +400,12 @@ public class Utils {
 		return Arrays.stream(string.trim().split(separator)).map(Long::parseLong).toList();
 	}
 
-	public static List<Long> parseLongsFromStringList(final List<String> strings) {
+	public static List<Long> parseLongFromStrings(final List<String> strings) {
 		return strings.stream().map(Long::parseLong).toList();
+	}
+
+	public static List<Tuple<Long>> parseLongTuplesFromStrings(final List<String> strings) {
+		return parseLongsFromStrings(strings, "-").stream().map(r -> new Tuple<Long>(r.get(0), r.get(1))).toList();
 	}
 
 	public static List<List<Long>> parseLongsFromStrings(final List<String> strings) {
@@ -601,6 +605,29 @@ public class Utils {
 				new Point(x - 1, y + 1),
 				new Point(x, y + 1),
 				new Point(x + 1, y + 1));
+	}
+
+	public static List<Tuple<Long>> mergeRanges(final List<Tuple<Long>> ranges) {
+		final List<Tuple<Long>> result = new ArrayList<>(ranges);
+		for (int i = 0; i < result.size(); i++) {
+			for (int j = i + 1; j < result.size(); j++) {
+				if (overlaps(result.get(i), result.get(j))) {
+					result.set(i, merge(result.get(i), result.get(j)));
+					result.remove(j);
+					j = i;
+				}
+			}
+		}
+		return result;
+	}
+
+	private static boolean overlaps(final Tuple<Long> r1, final Tuple<Long> r2) {
+		return (r1.l1() >= r2.l1() && r1.l1() <= r2.l2())
+				|| (r2.l1() >= r1.l1() && r2.l1() <= r1.l2());
+	}
+
+	private static Tuple<Long> merge(final Tuple<Long> r1, final Tuple<Long> r2) {
+		return new Tuple<Long>(Math.min(r1.l1(), r2.l1()), Math.max(r1.l2(), r2.l2()));
 	}
 
 	public static Path solveAStar(final Grid<Boolean> grid, final Point start, final Point end) {

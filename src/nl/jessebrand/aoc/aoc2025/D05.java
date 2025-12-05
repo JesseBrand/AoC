@@ -25,11 +25,11 @@ public class D05 {
 		out(input.ingredients);
 
 		final long totalA = input.ingredients.stream().filter(l -> isIncluded(l, input.ranges)).count();
-		out("1: %d", totalA);
+		out("Part 1: %d", totalA);
 		final List<Tuple<Long>> merged = mergeRanges(input.ranges);
 //		out(merged);
 		final long totalB = merged.stream().mapToLong(D05::count).sum();
-		out("2: %d", totalB);
+		out("Part 2: %d", totalB);
 		out();
 	}
 

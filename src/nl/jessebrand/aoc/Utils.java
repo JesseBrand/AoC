@@ -371,6 +371,21 @@ public class Utils {
 		return lines.get(y).charAt(x);
 	}
 
+	public static List<List<String>> splitOnEmpty(final List<String> lines) {
+		final List<List<String>> result = new ArrayList<>();
+		List<String> cur = new ArrayList<>();
+		result.add(cur);
+		for (final String line : lines) {
+			if (line.isEmpty()) {
+				cur = new ArrayList<>();
+				result.add(cur);
+			} else {
+				cur.add(line);
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * Standard parse using whitespace as separator.
 	 */
@@ -607,7 +622,9 @@ public class Utils {
 				new Point(x + 1, y + 1));
 	}
 
-	public static List<Tuple<Long>> mergeRanges(final List<Tuple<Long>> ranges) {
+	// Tuple Utils
+
+	public static List<Tuple<Long>> union(final List<Tuple<Long>> ranges) {
 		final List<Tuple<Long>> result = new ArrayList<>(ranges);
 		for (int i = 0; i < result.size(); i++) {
 			for (int j = i + 1; j < result.size(); j++) {
@@ -624,6 +641,15 @@ public class Utils {
 	private static boolean overlaps(final Tuple<Long> r1, final Tuple<Long> r2) {
 		return (r1.l1() >= r2.l1() && r1.l1() <= r2.l2())
 				|| (r2.l1() >= r1.l1() && r2.l1() <= r1.l2());
+	}
+
+	public static boolean contains(final List<Tuple<Long>> ranges, final long l) {
+		for (final Tuple<Long> range : ranges) {
+			if (l >= range.l1() && l <= range.l2()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static Tuple<Long> merge(final Tuple<Long> r1, final Tuple<Long> r2) {

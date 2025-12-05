@@ -1,10 +1,12 @@
 package nl.jessebrand.aoc.aoc2025;
 
-import static nl.jessebrand.aoc.Utils.mergeRanges;
+import static nl.jessebrand.aoc.Utils.contains;
 import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.parseLongFromStrings;
 import static nl.jessebrand.aoc.Utils.parseLongTuplesFromStrings;
 import static nl.jessebrand.aoc.Utils.readFile;
+import static nl.jessebrand.aoc.Utils.splitOnEmpty;
+import static nl.jessebrand.aoc.Utils.union;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,9 +26,9 @@ public class D05 {
 		out(input.ranges);
 		out(input.ingredients);
 
-		final long totalA = input.ingredients.stream().filter(l -> isIncluded(l, input.ranges)).count();
+		final long totalA = input.ingredients.stream().filter(l -> contains(input.ranges, l)).count();
 		out("Part 1: %d", totalA);
-		final List<Tuple<Long>> merged = mergeRanges(input.ranges);
+		final List<Tuple<Long>> merged = union(input.ranges);
 //		out(merged);
 		final long totalB = merged.stream().mapToLong(D05::count).sum();
 		out("Part 2: %d", totalB);
@@ -36,25 +38,10 @@ public class D05 {
 	private record Input(List<Tuple<Long>> ranges, List<Long> ingredients) {}
 
 	private static Input parseInput(final List<String> lines) {
-		for (int i = 0; i < lines.size(); i++) {
-			final String line = lines.get(i);
-			if (!line.isEmpty()) {
-				continue;
-			}
-			final List<Tuple<Long>> ranges = parseLongTuplesFromStrings(lines.subList(0, i));
-			final List<Long> ingredients = parseLongFromStrings(lines.subList(i + 1, lines.size()));
-			return new Input(ranges, ingredients);
-		}
-		throw new IllegalStateException();
-	}
-
-	private static boolean isIncluded(final long l, final List<Tuple<Long>> ranges) {
-		for (final Tuple<Long> range : ranges) {
-			if (l >= range.l1() && l <= range.l2()) {
-				return true;
-			}
-		}
-		return false;
+		final List<List<String>> split = splitOnEmpty(lines);
+		final List<Tuple<Long>> ranges = parseLongTuplesFromStrings(split.get(0));
+		final List<Long> ingredients = parseLongFromStrings(split.get(1));
+		return new Input(ranges, ingredients);
 	}
 
 	private static long count(final Tuple<Long> range) {

@@ -9,8 +9,8 @@ import java.util.List;
 public class D06 {
 
 	public static void main(final String[] args) throws IOException {
-		solve("2025/d01ex");
-		solve("2025/d01");
+		solve("2025/d06ex");
+		solve("2025/d06");
 	}
 
 	private static void solve(final String file) throws IOException {

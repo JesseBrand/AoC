@@ -400,6 +400,10 @@ public class Utils {
 		return Arrays.stream(string.trim().split(separator)).map(Long::parseLong).toList();
 	}
 
+	public static List<Long> parseLongsFromStringList(final List<String> strings) {
+		return strings.stream().map(Long::parseLong).toList();
+	}
+
 	public static List<List<Long>> parseLongsFromStrings(final List<String> strings) {
 		return parseLongsFromStrings(strings, ",");
 	}

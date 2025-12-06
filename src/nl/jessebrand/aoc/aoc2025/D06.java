@@ -7,44 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.jessebrand.aoc.Operator;
+
 public class D06 {
 
 	public static void main(final String[] args) throws IOException {
 		solve("2025/d06ex");
 		solve("2025/d06");
-	}
-
-	private static enum Operator {
-		PLUS("+") {
-			@Override
-			long apply(long a, long b) {
-				return a + b;
-			}
-		},
-		MULTI("*") {
-			@Override
-			long apply(long a, long b) {
-				return a * b;
-			}
-		};
-
-		private final String symbol;
-
-		private Operator(String symbol) {
-			this.symbol = symbol;
-		}
-
-		static final Operator from(final String symbol) {
-			for (final Operator o : values()) {
-				if (o.symbol.equals(symbol)) {
-					return o;
-				}
-			}
-			throw new IllegalArgumentException(symbol);
-		}
-
-		abstract long apply(final long a, final long b);
-		
 	}
 
 	private static void solve(final String file) throws IOException {
@@ -53,13 +22,13 @@ public class D06 {
 		long resultA = 0;
 		for (final Problem problem : problems) {
 			List<Long> longs = problem.strings().stream().map(String::trim).map(Long::parseLong).toList();
-			resultA += solve(longs, problem.o);
+			resultA += problem.o.apply(longs);
 		}
 		
 		long resultB = 0;
 		for (final Problem problem : problems) {
 			List<Long> longs = convertLongs(problem.strings());
-			resultB += solve(longs, problem.o);
+			resultB += problem.o.apply(longs);
 		}
 
 		out("Part 1: %d", resultA);
@@ -76,7 +45,7 @@ public class D06 {
 				final int to = i;
 				List<String> strings = lines.stream().map(l -> l.substring(from, to)).toList();
 				out(strings);
-				Operator o = Operator.from(strings.get(strings.size() - 1).trim());
+				final Operator o = Operator.from(strings.get(strings.size() - 1).trim());
 				strings = strings.subList(0, strings.size() - 1);
 				result.add(new Problem(strings, o));
 				start = i + 1;
@@ -85,7 +54,7 @@ public class D06 {
 		return result;
 	}
 
-	private static boolean eachBlank(List<String> lines, int i) {
+	private static boolean eachBlank(final List<String> lines, final int i) {
 		for (String line : lines) {
 			if (line.charAt(i) != ' ') {
 				return false;
@@ -95,11 +64,6 @@ public class D06 {
 	}
 
 	private record Problem(List<String> strings, Operator o) {}
-
-
-	private static long solve(final List<Long> ints, final Operator o) {
-		return ints.stream().reduce(o::apply).get();
-	}
 
 	private static List<Long> convertLongs(List<String> strings) {
 		final List<Long> result = new ArrayList<>();
@@ -120,3 +84,4 @@ public class D06 {
 	}
 }
 
+// 10142723156431

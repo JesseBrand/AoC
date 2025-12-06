@@ -59,7 +59,7 @@ public class D06 {
 		return result;
 	}
 
-	private static String fromEach(List<String> strings, int i) {
+	private static String fromEach(final List<String> strings, final int i) {
 		return strings.stream().map(s -> s.charAt(i)).map(c -> c.toString()).collect(Collectors.joining());
 	}
 }

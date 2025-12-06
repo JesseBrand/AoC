@@ -6,6 +6,7 @@ import static nl.jessebrand.aoc.Utils.readFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import nl.jessebrand.aoc.Operator;
 
@@ -18,24 +19,15 @@ public class D06 {
 
 	private static void solve(final String file) throws IOException {
 		final List<String> lines = readFile(file);
-		List<Problem> problems = parseProblems(lines);
-		long resultA = 0;
-		for (final Problem problem : problems) {
-			List<Long> longs = problem.strings().stream().map(String::trim).map(Long::parseLong).toList();
-			resultA += problem.o.apply(longs);
-		}
-		
-		long resultB = 0;
-		for (final Problem problem : problems) {
-			List<Long> longs = convertLongs(problem.strings());
-			resultB += problem.o.apply(longs);
-		}
+		final List<Problem> problems = parseProblems(lines);
+		long resultA = problems.stream().mapToLong(p -> p.o.apply(p.strings().stream().map(String::trim).map(Long::parseLong).toList())).sum();
+		long resultB = problems.stream().mapToLong(p -> p.o.apply(convertLongs(p.strings()))).sum();
 
 		out("Part 1: %d", resultA);
 		out("Part 2: %d", resultB);
 	}
 
-	private static List<Problem> parseProblems(List<String> lines) {
+	private static List<Problem> parseProblems(final List<String> lines) {
 		final List<Problem> result = new ArrayList<>();
 		final int length = lines.get(0).length();
 		int start = 0;
@@ -44,7 +36,6 @@ public class D06 {
 				final int from = start;
 				final int to = i;
 				List<String> strings = lines.stream().map(l -> l.substring(from, to)).toList();
-				out(strings);
 				final Operator o = Operator.from(strings.get(strings.size() - 1).trim());
 				strings = strings.subList(0, strings.size() - 1);
 				result.add(new Problem(strings, o));
@@ -55,33 +46,23 @@ public class D06 {
 	}
 
 	private static boolean eachBlank(final List<String> lines, final int i) {
-		for (String line : lines) {
-			if (line.charAt(i) != ' ') {
-				return false;
-			}
-		}
-		return true;
+		return !lines.stream().filter(s -> s.charAt(i) != ' ').findAny().isPresent();
 	}
 
 	private record Problem(List<String> strings, Operator o) {}
 
-	private static List<Long> convertLongs(List<String> strings) {
+	private static List<Long> convertLongs(final List<String> strings) {
 		final List<Long> result = new ArrayList<>();
 		for (int i = 0; i < strings.get(0).length(); i++) {
 			result.add(Long.parseLong(fromEach(strings, i).trim()));
 		}
-		out(result);
 		return result;
 	}
 
 	private static String fromEach(List<String> strings, int i) {
-		String result = "";
-		Object[] cs = strings.stream().map(s -> s.charAt(i)).toArray();
-		for (Object c : cs) {
-			result += (char) c;
-		}
-		return result;
+		return strings.stream().map(s -> s.charAt(i)).map(c -> c.toString()).collect(Collectors.joining());
 	}
 }
 
+// 5335495999141
 // 10142723156431

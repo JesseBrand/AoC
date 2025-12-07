@@ -6,7 +6,6 @@ import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.readFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,51 +23,62 @@ public class D07 {
 	private static void solve(final String file) throws IOException {
 		final List<String> lines = readFile(file);
 		final Grid<Character> grid = buildCharGrid(lines);
-		out(grid);
+//		out(grid);
 		
-		int resultA = fillBeam(grid);
-		long resultB = countBeamOptions(grid);
-
-		out("Part 1: %d", resultA);
-		out("Part 2: %d", resultB);
+		out("Part 1: %d", fillBeam(grid));
+//		out(grid);
+		out("Part 2: %d", countOptions(grid));
+		out();
 	}
 
-	private static int fillBeam(Grid<Character> grid) {
+	private static int fillBeam(final Grid<Character> grid) {
 		final Point start = findGridPoint(grid, 'S');
-		final List<Point> points = new ArrayList<>();
-		points.add(start.add(0, 1));
+		return fillBeamFor(grid, start.add(0, 1));
+	}
 
-		int result = 0;
-		while (!points.isEmpty()) {
-			final Point p = points.get(0);
-			points.remove(p);
-			Point r = runA(grid, p);
-			if (r != null) {
-				points.add(r.add(1, 1));
-				points.add(r.add(-1, 1));
-				result++;
-			}
+	private static int fillBeamFor(final Grid<Character> grid, final Point p) {
+		final Point r = runA(grid, p);
+		if (r == null) {
+			return 0;
 		}
-		out(grid);
-		return result;
+		return 1 + fillBeamFor(grid, r.add(1, 1)) + fillBeamFor(grid, r.add(-1, 1));
 	}
 
-	private static long countBeamOptions(Grid<Character> grid) {
+	/**
+	 * Input: position where to start with beam.
+	 * Returns position of splitter.
+	 */
+	private static Point runA(final Grid<Character> grid, final Point start) {
+		Point p = start;
+		while (p.y() < grid.getHeight()) {
+			if (grid.get(p) == '|') {
+				return null;
+			}
+			if (grid.get(p) == '^') {
+				return p;
+			}
+			grid.set(p, '|');
+			p = p.add(0, 1);
+		}
+		return null;
+	}
+
+	private static long countOptions(final Grid<Character> grid) {
 		final Point start = findGridPoint(grid, 'S');
-		return calcFor(grid, start.add(0, 1));
+		return countOptionsFor(grid, start.add(0, 1));
 	}
 
 	private static final Map<Point, Long> CACHE = new HashMap<>();
 
-	private static long calcFor(Grid<Character> grid, Point p) {
+	private static long countOptionsFor(final Grid<Character> grid, final Point p) {
 		if (CACHE.containsKey(p)) {
 			return CACHE.get(p);
 		}
-		Point r = runB(grid, p);
+		final Point r = runB(grid, p);
 		if (r == null) {
 			return 1;
 		}
-		long result = calcFor(grid, r.add(1, 1)) + calcFor(grid, r.add(-1, 1));
+		final long result = countOptionsFor(grid, r.add(1, 1)) + countOptionsFor(grid, r.add(-1, 1));
 		CACHE.put(p, result);
 		return result;
 	}
@@ -77,36 +87,17 @@ public class D07 {
 	 * Input: position where to start with beam.
 	 * Returns position of splitter.
 	 */
-	private static Point runA(Grid<Character> grid, Point p) {
-		int x = p.x();
-		int y = p.y();
-		while (y < grid.getHeight()) {
-			if (grid.get(x, y) == '|') {
-				return null;
+	private static Point runB(final Grid<Character> grid, final Point start) {
+		Point p = start;
+		while (p.y() < grid.getHeight()) {
+			if (grid.get(p) == '^') {
+				return p;
 			}
-			if (grid.get(x, y) == '^') {
-				return new Point(x, y);
-			}
-			grid.set(x, y, '|');
-			y++;
-		}
-		return null;
-	}
-
-	/**
-	 * Input: position where to start with beam.
-	 * Returns position of splitter.
-	 */
-	private static Point runB(Grid<Character> grid, Point p) {
-		int x = p.x();
-		int y = p.y();
-		while (y < grid.getHeight()) {
-			if (grid.get(x, y) == '^') {
-				return new Point(x, y);
-			}
-			y++;
+			p = p.add(0, 1);
 		}
 		return null;
 	}
 }
 
+// 1609
+// 12472142047197

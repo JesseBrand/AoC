@@ -215,6 +215,10 @@ public class Utils {
 		return result;
 	}
 
+	public static double euclideanDistance(final Point3 p1, final Point3 p2) {
+		return Math.sqrt(Math.pow(p1.x() - p2.x(), 2) + Math.pow(p1.y() - p2.y(), 2) + Math.pow(p1.z() - p2.z(), 2));
+	}
+
 	public static int manhDistance(Point point1, Point point2) {
 		return manhDistance(point1.x(), point1.y(), point2.x(), point2.y());
 	}
@@ -275,6 +279,11 @@ public class Utils {
 			result.add(grid.get(point.x(), point.y()));
 		}
 		return result;
+	}
+
+	public static boolean isUniform(final Collection<?> c) {
+		final Object first = c.iterator().next();
+	    return !c.stream().anyMatch(o -> o != first);
 	}
 	
 	public static void out(final String format, final Object...args) {

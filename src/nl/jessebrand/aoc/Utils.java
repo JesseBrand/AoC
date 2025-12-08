@@ -633,6 +633,16 @@ public class Utils {
 
 	// Tuple Utils
 
+	public static <T> List<Tuple<T>> combinations(final List<T> objects) {
+		final List<Tuple<T>> result = new ArrayList<>();
+		for (int i = 0; i < objects.size(); i++) {
+			for (int j = i + 1; j < objects.size(); j++) {
+				result.add(new Tuple<T>(objects.get(i), objects.get(j)));
+			}
+		}
+		return result;
+	}
+
 	public static List<Tuple<Long>> union(final List<Tuple<Long>> ranges) {
 		final List<Tuple<Long>> result = new ArrayList<>(ranges);
 		for (int i = 0; i < result.size(); i++) {

@@ -1,7 +1,7 @@
 package nl.jessebrand.aoc.aoc2025;
 
 import static nl.jessebrand.aoc.Utils.euclideanDistance;
-import static nl.jessebrand.aoc.Utils.isUniform;
+import static nl.jessebrand.aoc.Utils.*;
 import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.parsePoint3s;
 import static nl.jessebrand.aoc.Utils.readFile;
@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import nl.jessebrand.aoc.Point3;
+import nl.jessebrand.aoc.Tuple;
 
 public class D08 {
 
@@ -34,7 +35,7 @@ public class D08 {
 	private static void solve(final String file, final int max) throws IOException {
 		final List<String> lines = readFile(file);
 		final List<Point3> points = parsePoint3s(lines);
-		final List<Connection> conns = allCombinations(points);
+		final List<Connection> conns = new ArrayList<>(combinations(points).stream().map(t -> new Connection(t)).toList());
 		conns.sort(COMPARATOR);
 		
 		final Map<Point3, Integer> groups = new HashMap<>();
@@ -65,20 +66,15 @@ public class D08 {
 	}
 
 	private static List<Long> groupCounts(final Map<Point3, Integer> groups) {
-		return new ArrayList<>(IntStream.range(0, groups.size()).mapToLong(i -> groups.values().stream().filter(v -> v == i).count()).mapToObj(l -> l).toList());
-	}
-
-	private static List<Connection> allCombinations(final List<Point3> points) {
-		final List<Connection> result = new ArrayList<>();
-		for (int i = 0; i < points.size(); i++) {
-			for (int j = i + 1; j < points.size(); j++) {
-				result.add(new Connection(points.get(i), points.get(j)));
-			}
-		}
-		return result;
+		return new ArrayList<>(IntStream.range(0, groups.size()).mapToLong(
+				i -> groups.values().stream().filter(v -> v == i).count()
+		).mapToObj(l -> l).toList());
 	}
 
 	private static record Connection(Point3 p1, Point3 p2, double distance) {
+		private Connection(final Tuple<Point3> t) {
+			this(t.l1(), t.l2());
+		}
 		private Connection(final Point3 p1, final Point3 p2) {
 			this(p1, p2, euclideanDistance(p1, p2));
 		}

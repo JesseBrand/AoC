@@ -12,7 +12,7 @@ public record Point(int x, int y) implements HasLocation, Comparable<Point> {
 	
 	@Override
 	public String toString() {
-		return String.format("Point[%d,%d]", x(), y());
+		return String.format("[%d,%d]", x(), y());
 	}
 
 	@Override

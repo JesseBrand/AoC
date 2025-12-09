@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.JFrame;
@@ -273,18 +274,7 @@ public class Utils {
 		return new String(chars);
 	}
 
-	public static <T> List<T> toGridValues(Grid<T> grid, List<Point> points) {
-		List<T> result = new ArrayList<>(points.size());
-		for (final Point point : points) {
-			result.add(grid.get(point.x(), point.y()));
-		}
-		return result;
-	}
-
-	public static boolean isUniform(final Collection<?> c) {
-		final Object first = c.iterator().next();
-	    return !c.stream().anyMatch(o -> o != first);
-	}
+	// Output Utils
 	
 	public static void out(final String format, final Object...args) {
 		System.out.println(String.format(format, args));
@@ -296,6 +286,13 @@ public class Utils {
 
 	public static void out(final Object o) {
 		System.out.println(o);
+	}
+
+	// Collection Utils
+
+	public static boolean isUniform(final Collection<?> c) {
+		final Object first = c.iterator().next();
+	    return !c.stream().anyMatch(o -> o != first);
 	}
 
 	public static <T> Set<T> set(final Set<T>... sets) {
@@ -536,6 +533,8 @@ public class Utils {
 		return list.stream().filter(t -> t.equals(o)).count();
 	}
 
+	// Grid Utils
+
 	public static Grid<Character> buildCharGrid(final List<String> lines) {
 		final Grid<Character> grid = new Grid<>(lines.get(0).length(), lines.size(), "");
 		for (int y = 0; y < lines.size(); y++) {
@@ -556,6 +555,34 @@ public class Utils {
 			}
 		}
 		return grid;
+	}
+
+	public static <T> List<T> toGridValues(Grid<T> grid, List<Point> points) {
+		List<T> result = new ArrayList<>(points.size());
+		for (final Point point : points) {
+			result.add(grid.get(point.x(), point.y()));
+		}
+		return result;
+	}
+
+	public static <T> void drawPath(final Grid<T> grid, final Point p1, final Point p2, final T value) {
+		for (Point p : fromTo(p1, p2)) {
+			grid.set(p, value);
+		}
+	}
+
+	private static List<Point> fromTo(Point gp1, Point gp2) {
+		if (gp1.x() == gp2.x()) {
+			int yMin = Math.min(gp1.y(), gp2.y());
+			int yMax = Math.max(gp1.y(), gp2.y());
+			return IntStream.range(yMin, yMax + 1).mapToObj(y -> new Point(gp1.x(), y)).toList();
+		}
+		if (gp1.y() == gp2.y()) {
+			int xMin = Math.min(gp1.x(), gp2.x());
+			int xMax = Math.max(gp1.x(), gp2.x());
+			return IntStream.range(xMin, xMax + 1).mapToObj(x -> new Point(x, gp1.y())).toList();
+		}
+		throw new IllegalArgumentException("x and y not matching");
 	}
 
 	/**
@@ -583,15 +610,6 @@ public class Utils {
 		}
 		return result;
 	}
-	
-	public static Point applyDirection(final Point p, final Direction dir) {
-		return new Point(p.x() + dir.getXInc(), p.y() + dir.getYInc());
-	}
-
-	public static Point applyDirectionInverse(final Point p, final Direction dir) {
-		return new Point(p.x() - dir.getXInc(), p.y() - dir.getYInc());
-	}
-
 
 	public static <T> Set<T> findUniqueGridEntries(final Grid<T> grid) {
 		final Set<T> result = new HashSet<>();
@@ -601,6 +619,24 @@ public class Utils {
 			}
 		}
 		return result;
+	}
+
+	public static <T> boolean findInYRange(final Grid<T> grid, final int x, final int yMin, final int yMax, final T value) {
+		return IntStream.range(yMin, yMax + 1).filter(y -> grid.get(x, y) == value).findAny().isPresent();
+	}
+
+	public static <T> boolean findInXRange(final Grid<T> grid, final int y, final int xMin, final int xMax, final T value) {
+		return IntStream.range(xMin, xMax + 1).filter(x -> grid.get(x, y) == value).findAny().isPresent();
+	}
+
+	// Point Utils
+	
+	public static Point applyDirection(final Point p, final Direction dir) {
+		return new Point(p.x() + dir.getXInc(), p.y() + dir.getYInc());
+	}
+
+	public static Point applyDirectionInverse(final Point p, final Direction dir) {
+		return new Point(p.x() - dir.getXInc(), p.y() - dir.getYInc());
 	}
 
 	public static List<Point> get4Neighbours(final Point p) {

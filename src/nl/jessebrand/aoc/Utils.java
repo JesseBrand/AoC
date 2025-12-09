@@ -1,5 +1,7 @@
 package nl.jessebrand.aoc;
 
+import static nl.jessebrand.aoc.Utils.findInXRange;
+import static nl.jessebrand.aoc.Utils.findInYRange;
 import static nl.jessebrand.aoc.Utils.manhDistance;
 import static nl.jessebrand.aoc.Utils.visualize;
 
@@ -619,6 +621,22 @@ public class Utils {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Only takes into account accessibility from edges.
+	 */
+	public static void simpleGridfill(final Grid<Boolean> grid) {
+		for (int y = 0; y < grid.getHeight(); y++) {
+			for (int x = 0; x < grid.getWidth(); x++) {
+				if (grid.get(x, y)) {
+					continue;
+				}
+				if (findInYRange(grid, x, 0, y, true) && findInYRange(grid, x, y, grid.getHeight() - 1, true) && findInXRange(grid, y, 0, x, true) && findInXRange(grid, y, x, grid.getWidth() - 1, true)) {
+					grid.set(x, y, true);
+				}
+			}
+		}
 	}
 
 	public static <T> boolean findInYRange(final Grid<T> grid, final int x, final int yMin, final int yMax, final T value) {

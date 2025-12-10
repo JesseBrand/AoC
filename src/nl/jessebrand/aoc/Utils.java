@@ -697,6 +697,27 @@ public class Utils {
 		return result;
 	}
 
+	public static <T> List<List<T>> allCombinations(final List<T> objects) {
+		List<List<T>> prev = new ArrayList<>();
+		prev.add(new ArrayList<>());
+		return allCombinations(prev, objects.get(0), objects.subList(1, objects.size()));
+	}
+
+	private static <T> List<List<T>> allCombinations(List<List<T>> prev, T cur, List<T> future) {
+		final List<List<T>> result = new ArrayList<>();
+		for (final List<T> l : prev) {
+			final List<T> a = new ArrayList<>(l);
+			a.add(cur);
+			result.add(a);
+			result.add(l);
+		}
+		if (future.isEmpty()) {
+//			out(result);
+			return result;
+		}
+		return allCombinations(result, future.get(0), future.subList(1, future.size()));
+	}
+
 	public static List<Tuple<Long>> union(final List<Tuple<Long>> ranges) {
 		final List<Tuple<Long>> result = new ArrayList<>(ranges);
 		for (int i = 0; i < result.size(); i++) {

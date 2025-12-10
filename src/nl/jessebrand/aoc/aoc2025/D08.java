@@ -1,7 +1,9 @@
 package nl.jessebrand.aoc.aoc2025;
 
+import static nl.jessebrand.aoc.Utils.combinations;
+import static nl.jessebrand.aoc.Utils.doubleComparator;
 import static nl.jessebrand.aoc.Utils.euclideanDistance;
-import static nl.jessebrand.aoc.Utils.*;
+import static nl.jessebrand.aoc.Utils.isUniform;
 import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.parsePoint3s;
 import static nl.jessebrand.aoc.Utils.readFile;
@@ -9,7 +11,6 @@ import static nl.jessebrand.aoc.Utils.readFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +21,6 @@ import nl.jessebrand.aoc.Tuple;
 
 public class D08 {
 
-	private static final Comparator<Connection> COMPARATOR = new Comparator<Connection>() {
-		@Override
-		public int compare(final Connection c1, final Connection c2) {
-			return Double.compare(c1.distance(), c2.distance());
-		}
-	};
-
 	public static void main(final String[] args) throws IOException {
 		solve("2025/d08ex", 10);
 		solve("2025/d08", 1000);
@@ -36,7 +30,7 @@ public class D08 {
 		final List<String> lines = readFile(file);
 		final List<Point3> points = parsePoint3s(lines);
 		final List<Connection> conns = new ArrayList<>(combinations(points).stream().map(t -> new Connection(t)).toList());
-		conns.sort(COMPARATOR);
+		conns.sort(doubleComparator(o -> o.distance()));
 		
 		final Map<Point3, Integer> groups = new HashMap<>();
 		for (int i = 0; i < points.size(); i++) {

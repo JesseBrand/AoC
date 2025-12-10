@@ -2,6 +2,7 @@ package nl.jessebrand.aoc.aoc2025;
 
 import static nl.jessebrand.aoc.Utils.allCombinations;
 import static nl.jessebrand.aoc.Utils.booleansToString;
+import static nl.jessebrand.aoc.Utils.intComparator;
 import static nl.jessebrand.aoc.Utils.glue;
 import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.parseIntsFromString;
@@ -10,7 +11,6 @@ import static nl.jessebrand.aoc.Utils.readFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -54,15 +54,9 @@ public class D10 {
 		return string.substring(1, string.length() - 1);
 	}
 
-	private static final Comparator<List<List<Integer>>> COMPARATOR = new Comparator<>() {
-		public int compare(List<List<Integer>> o1, List<List<Integer>> o2) {
-			return Integer.compare(o1.size(), o2.size());
-		}
-	};
-
 	private static int calcSimplest(final Machine m) {
 		List<List<List<Integer>>> combis = new ArrayList<>(allCombinations(m.presses).stream().filter(l -> yieldsCorrectState(l, m.targetState)).toList());
-		combis.sort(COMPARATOR);
+		combis.sort(intComparator(l -> l.size()));
 		return combis.get(0).size();
 	}
 

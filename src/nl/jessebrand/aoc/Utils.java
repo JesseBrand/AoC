@@ -313,6 +313,24 @@ public class Utils {
 
 	// Collection Utils
 
+	public static <T> Comparator<T> intComparator(final Function<T, Integer> o) {
+		return new Comparator<T>() {
+			@Override
+			public int compare(final T o1, final T o2) {
+				return Integer.compare(o.apply(o1), o.apply(o2));
+			}
+		};
+	}
+	
+	public static <T> Comparator<T> doubleComparator(final Function<T, Double> o) {
+		return new Comparator<T>() {
+			@Override
+			public int compare(final T o1, final T o2) {
+				return Double.compare(o.apply(o1), o.apply(o2));
+			}
+		};
+	}
+
 	public static boolean isUniform(final Collection<?> c) {
 		final Object first = c.iterator().next();
 	    return !c.stream().anyMatch(o -> o != first);

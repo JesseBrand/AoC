@@ -75,6 +75,17 @@ public class Utils {
 		return sb.toString();
 	}
 
+	public static String glue(String sep, boolean[] values) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0) {
+				sb.append(sep);
+			}
+			sb.append(values[i]);
+		}
+		return sb.toString();
+	}
+
 	public static String glue(String sep, long[] values) {
     	StringBuilder sb = new StringBuilder();
     	for (int i = 0; i < values.length; i++) {
@@ -107,6 +118,16 @@ public class Utils {
     	}
     	return sb.toString();
     }
+
+	public static String booleansToString(final boolean[] arr, final char t, final char f) {
+		final StringBuilder sb = new StringBuilder();
+		for (final boolean b : arr) {
+			sb.append(b ? t : f);
+		}
+		return sb.toString();
+	}
+
+    // Point Utils
     
     public static Point parsePoint(final String s) {
     	return parsePoint(s, ",");

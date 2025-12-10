@@ -1,6 +1,7 @@
 package nl.jessebrand.aoc.aoc2025;
 
 import static nl.jessebrand.aoc.Utils.allCombinations;
+import static nl.jessebrand.aoc.Utils.glue;
 import static nl.jessebrand.aoc.Utils.out;
 import static nl.jessebrand.aoc.Utils.parseIntsFromString;
 import static nl.jessebrand.aoc.Utils.readFile;
@@ -8,10 +9,10 @@ import static nl.jessebrand.aoc.Utils.readFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class D10 {
 
@@ -24,20 +25,25 @@ public class D10 {
 
 	private static void solve(final String file) throws IOException {
 		final List<String> lines = readFile(file);
-		out(lines);
+//		out(lines);
 		final List<Machine> machines = lines.stream().map(D10::toMachine).toList();
 		out(machines);
 
-//		final long totalA = machines.parallelStream().mapToInt(D10::calcSimplest).sum();
-//		out("Part 1: %d", totalA);
+		final long totalA = machines.parallelStream().mapToInt(D10::calcSimplest).sum();
+		out("Part 1: %d", totalA);
 		
-		final long totalB = machines.stream().mapToInt(D10::calcJoltage).sum();
+		final long totalB = machines.parallelStream().mapToInt(D10::calcJoltage).sum();
 		out("Part 2: %d", totalB);
 		
 		out();
 	}
 
-	private static record Machine(String targetState, List<List<Integer>> presses, int[] joltages) {}
+	private static record Machine(String targetState, List<List<Integer>> presses, int[] joltages) {
+		@Override
+		public final String toString() {
+			return String.format("[%s %s {%s}]", targetState, glue(" ", presses), unbox(Arrays.toString(joltages)));
+		}
+	}
 
 	private static Machine toMachine(final String line) {
 		final List<String> split = Arrays.asList(line.split(" "));
@@ -63,45 +69,37 @@ public class D10 {
 		return combis.get(0).size();
 	}
 
+	// thought: A*
+
 	private static int calcJoltage(final Machine m) {
 		final int[] initialJoltages = new int[m.joltages().length];
 		for (int i = 0; i < m.joltages().length; i++) {
 			initialJoltages[i] = 0;
 		}
-		final List<List<Integer>> presses = m.presses();
-
-		List<State> states = new ArrayList<>();
-		states.add(new State(0, initialJoltages, 0));
-
-		while (true) {
-//			final List<State> newStates = new ArrayList<>(states.size() * m.presses.size());
-			final List<State> newStates = new LinkedList<>();
-//			out("Depth %d (%d states)", states.get(0).presses() + 1, states.size());
-			for (final State state : states) {
-				for (int i = state.start; i < presses.size(); i++) {
-					final List<Integer> pr = presses.get(i);
-					final int[] joltages = state.joltages().clone();
-					apply(joltages, pr);
-					if (!disqualifies(joltages, m.joltages)) {// && !contains(newStates, joltages)) {
-						newStates.add(new State(state.presses + 1, joltages, i));
-					}
-				}
-			}
-			states = newStates;
-			final List<Integer> results = new ArrayList<>(states.stream().filter(s -> Arrays.equals(m.joltages(), s.joltages())).map(s -> s.presses()).toList());
-			if (!results.isEmpty()) {
-				Collections.sort(results);
-				out(results.get(0));
-				return results.get(0);
-			}
-		}
+		int result = calcJoltage(initialJoltages, 0, m.presses(), 0, m.joltages());
+		out(result);
+		return result;
 	}
 	
-	// thought: alle opties laten berekenen
-
-	private static boolean contains(List<State> states, int[] joltages) {
-		return states.stream().filter(s -> Arrays.equals(s.joltages(), joltages)).findAny().isPresent();
+	private static Integer calcJoltage(final int[] curJoltages, final int presses, final List<List<Integer>> options, final int startI, final int[] targetJoltages) {
+		if (Arrays.equals(curJoltages, targetJoltages)) {
+			return presses;
+		}
+		if (disqualifies(curJoltages, targetJoltages)) {
+			return null;
+		}
+		final List<Integer> results = IntStream.range(startI, options.size()).mapToObj(i -> {
+			final List<Integer> option = options.get(i);
+			final int[] newJoltages = curJoltages.clone();
+			apply(newJoltages, option);
+			return calcJoltage(newJoltages, presses + 1, options, i, targetJoltages);
+		}).filter(Objects::nonNull).toList();
+		return results.isEmpty() ? null : results.stream().mapToInt(i -> i).min().getAsInt();
 	}
+
+//	private static boolean contains(List<State> states, int[] joltages) {
+//		return states.stream().filter(s -> Arrays.equals(s.joltages(), joltages)).findAny().isPresent();
+//	}
 
 	private static boolean disqualifies(int[] joltages, int[] targetJoltages) {
 		for (int i = 0; i < joltages.length; i++) {
@@ -112,7 +110,7 @@ public class D10 {
 		return false;
 	}
 
-	private static record State(int presses, int[] joltages, int start) {}
+//	private static record State(int presses, int[] joltages, int start) {}
 
 	private static boolean yieldsCorrectState(final List<List<Integer>> combi, final String target) {
 		final Boolean[] targetState = toArray(target.chars().mapToObj(c -> c == '#').toList());

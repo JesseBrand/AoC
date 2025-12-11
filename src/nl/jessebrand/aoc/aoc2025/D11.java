@@ -6,6 +6,7 @@ import static nl.jessebrand.aoc.Utils.readFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +29,7 @@ public class D11 {
 	private static void solve(final String file) throws IOException {
 		final List<String> lines = readFile(file);
 		final List<Machine> machines = new ArrayList<>(lines.stream().map(D11::toMachine).toList());
-		machines.add(new Machine("out", new ArrayList<>()));
+		machines.add(new Machine("out", Collections.emptyList()));
 		fillLeadsTo(machines);
 		out(machines);
 		
@@ -72,8 +73,7 @@ public class D11 {
 
 
 	private static long findRoutesLong(final List<Machine> machines, final String start, final String end) {
-		final Machine startM = findMachine(machines, start);
-		return findAllLong(startM, end, machines);
+		return findAllLong(findMachine(machines, start), end, machines);
 	}
 
 	private static long findAllLong(final Machine start, final String target, final List<Machine> machines) {
@@ -112,11 +112,7 @@ public class D11 {
 	}
 
 	private static Machine findMachine(final List<Machine> machines, final String name) {
-		try {
-			return machines.stream().filter(m -> m.name().equals(name)).findFirst().get();
-		} catch(NoSuchElementException e) {
-			return null;
-		}
+		return machines.stream().filter(m -> m.name().equals(name)).findFirst().orElse(null);
 	}
 
 	private static List<Machine> findMachinesWithOut(final List<Machine> machines, final String out) {

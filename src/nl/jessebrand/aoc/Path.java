@@ -5,20 +5,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
-public record Path(List<Point> points) implements Iterable<Point> {
-	public Path(final Point p) {
+public record Path<T>(List<T> points) implements Iterable<T> {
+	public Path(final T p) {
 		this(Arrays.asList(p));
 	}
 
-	public Path(final Path parentPath, final Point p) {
+	public Path(final Path<T> parentPath, final T p) {
 		this(Stream.concat(parentPath.points().stream(), Stream.of(p)).toList());
 	}
 
-	public final Point first() {
+	public final T first() {
 		return points().get(0);
 	}
 
-	public final Point last() {
+	public final T last() {
 		return points().get(length());
 	}
 
@@ -26,17 +26,21 @@ public record Path(List<Point> points) implements Iterable<Point> {
 		return points().size() - 1;
 	}
 	
-	public final Point get(final int index) {
+	public final T get(final int index) {
 		return points().get(index);
 	}
 
-	public final Stream<Point> stream() {
+	public final Stream<T> stream() {
 		return points().stream();
 	}
 
 	@Override
-	public final Iterator<Point> iterator() {
+	public final Iterator<T> iterator() {
 		return points().iterator();
+	}
+
+	public final boolean contains(T object) {
+		return stream().filter(o -> o.equals(object)).findAny().isPresent();
 	}
 	
 }

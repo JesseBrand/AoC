@@ -36,7 +36,7 @@ public class D20 {
 
 	private static List<Point> calcAllCheats(final Grid<Boolean> grid, final Point start, final Point end, final int maxShortcutLength, final int minLength) {
 		final List<Point> cheats = new ArrayList<>();
-		final Path origPath = solveAStar(grid, start, end);
+		final Path<Point> origPath = solveAStar(grid, start, end);
 		final int origLength = origPath.length();
 		for (int i = 0; i < origPath.length() + 1; i++) {
 			final Point p1 = origPath.get(i);

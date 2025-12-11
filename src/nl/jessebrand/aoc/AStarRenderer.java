@@ -6,10 +6,10 @@ import java.awt.Graphics;
 public final class AStarRenderer {
 
 	private final Grid<Boolean> grid;
-	private final Path path;
+	private final Path<Point> path;
 	private final int scale;
 
-	public AStarRenderer(final Grid<Boolean> grid, final Path path, final int scale) {
+	public AStarRenderer(final Grid<Boolean> grid, final Path<Point> path, final int scale) {
 		this.grid = grid;
 		this.path = path;
 		this.scale = scale;

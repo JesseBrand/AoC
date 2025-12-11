@@ -33,7 +33,7 @@ import javax.swing.JPanel;
 
 public class Utils {
 
-	private static class AStarComparator implements Comparator<Path> {
+	private static class AStarComparator implements Comparator<Path<Point>> {
 
 		private final Point target;
 
@@ -42,7 +42,7 @@ public class Utils {
 		}
 		
 		@Override
-		public int compare(final Path p1, final Path p2) {
+		public int compare(final Path<Point> p1, final Path<Point> p2) {
 			int mh1 = p1.length() + manhDistance(p1.last(), target);
 			int mh2 = p2.length() + manhDistance(p2.last(), target);
 			if (mh1 != mh2) {
@@ -789,21 +789,21 @@ public class Utils {
 		return new Tuple<Long>(Math.min(r1.l1(), r2.l1()), Math.max(r1.l2(), r2.l2()));
 	}
 
-	public static Path solveAStar(final Grid<Boolean> grid, final Point start, final Point end) {
-		final Set<Path> next = new TreeSet<>(new AStarComparator(end));
-		final Map<Point, Path> register = new HashMap<>();
-		final Path startPath = new Path(start);
+	public static Path<Point> solveAStar(final Grid<Boolean> grid, final Point start, final Point end) {
+		final Set<Path<Point>> next = new TreeSet<>(new AStarComparator(end));
+		final Map<Point, Path<Point>> register = new HashMap<>();
+		final Path<Point> startPath = new Path<Point>(start);
 		next.add(startPath);
 		register.put(start, startPath);
 		while (!next.isEmpty()) {
-			final Path evalPath = next.iterator().next();
+			final Path<Point> evalPath = next.iterator().next();
 			final Point evalPoint = evalPath.last();
 //			out("eval %s", evalPoint);
 			if (evalPoint.equals(end)) {
 				return evalPath;
 			}
 			get4Neighbours(evalPoint).stream().filter(grid::contains).filter(p -> !grid.get(p)).filter(p -> !register.containsKey(p)).forEach(p -> {
-				final Path nextPath = new Path(evalPath, p);
+				final Path<Point> nextPath = new Path<Point>(evalPath, p);
 				next.add(nextPath);
 				register.put(p, nextPath);
 			});

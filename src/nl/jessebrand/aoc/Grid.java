@@ -48,6 +48,10 @@ public final class Grid<T> implements Iterable<Point> {
 			}
 		}
 	}
+
+	public Object[] row(final int y) {
+		return values[y];
+	}
 	
 	public T get(Point loc) {
 		return get(loc.x(), loc.y());
@@ -103,6 +107,31 @@ public final class Grid<T> implements Iterable<Point> {
 	public final Grid<T> clone() {
 		return convert(o -> o);
 	}
+
+	@Override
+	public final boolean equals(final Object obj) {
+		if (obj == null || obj.getClass() != Grid.class) {
+			return false;
+		}
+		Grid<T> other = (Grid<T>) obj;
+		// TODO: type
+		if (other.getWidth() != getWidth() || other.getHeight() != getHeight()) {
+			return false;
+		}
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getWidth(); y++) {
+				if (!get(x, y).equals(other.get(x, y))) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return values.hashCode(); // TODO: not correct
+	}
 	
 	public final Stream<Point> stream() {
 		return IntStream.range(0, getHeight()).mapToObj(y -> {
@@ -121,6 +150,26 @@ public final class Grid<T> implements Iterable<Point> {
 			for (int x = 0; x < getWidth(); x++) {
 				final T curValue = get(x, y);
 				result.set(x, y, mapper.apply(curValue));
+			}
+		}
+		return result;
+	}
+
+	public final Grid<T> flipX() {
+		final Grid<T> result = new Grid<T>(getWidth(), getHeight());
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
+				result.set(x, y, get(getWidth() - x - 1, y));
+			}
+		}
+		return result;
+	}
+
+	public final Grid<T> rotateClockwise() {
+		final Grid<T> result = new Grid<T>(getHeight(), getWidth());
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
+				result.set(x, y, get(y, getHeight() - x - 1));
 			}
 		}
 		return result;

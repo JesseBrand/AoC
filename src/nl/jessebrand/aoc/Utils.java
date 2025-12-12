@@ -63,6 +63,17 @@ public class Utils {
         }
         return sb.toString();
     }
+	
+	public static <T> String glue(String sep, T[] values) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0) {
+				sb.append(sep);
+			}
+			sb.append(values[i].toString());
+		}
+		return sb.toString();
+	}
 
 	public static String glue(String sep, int[] values) {
 		StringBuilder sb = new StringBuilder();
@@ -582,6 +593,19 @@ public class Utils {
 			String line = lines.get(y);
 			for (int x = 0; x < line.length(); x++) {
 				grid.set(x, y, line.charAt(x));
+			}
+		}
+		return grid;
+	}
+
+	public static Grid<Boolean> buildBooleanGrid(final List<String> lines, final char trueChar) {
+		final Grid<Boolean> grid = new Grid<>(lines.get(0).length(), lines.size(), false);
+		for (int y = 0; y < lines.size(); y++) {
+			String line = lines.get(y);
+			for (int x = 0; x < line.length(); x++) {
+				if (line.charAt(x) == trueChar) {
+					grid.set(x, y, true);
+				}
 			}
 		}
 		return grid;
